@@ -1,18 +1,23 @@
 package com.assistanceinformatiquetoulouse.roulezrose.staff;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.RecyclerView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -47,10 +52,10 @@ import java.util.List;
 public class ItemListActivity extends AppCompatActivity {
     // Attributs privés
     private boolean mTwoPane;
+    private Toolbar pToolbar;
     private View pRecyclerView;
     private TextView pTextViewDate;
-    private final String pURL = "http://82.224.153.132/roulezrose/index_staff.php";
-    //private final String pURL = "http://192.168.0.100/roulezrose/index_staff.php";
+    private String pURL;
     private ArrayList<Staffeur> pListeStaffeur;
 
     @Override
@@ -58,17 +63,17 @@ public class ItemListActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
+        //pToolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(pToolbar);
         pRecyclerView = findViewById(R.id.item_list);
-        pTextViewDate = (TextView) findViewById(R.id.randonnee);
+        pTextViewDate = (TextView) findViewById(R.id.dateRandonnee);
+        pURL = getString(R.string.URL);
         pListeStaffeur = new ArrayList<>();
         assert pRecyclerView != null;
         // Lire la base de données du staff
         DownloadTask downloadTask = new DownloadTask();
         downloadTask.execute(pURL);
 
-        //Toolbar toolbar = (Toolbar) findViewById(R.titre.toolbar);
-        //setSupportActionBar(toolbar);
-        //toolbar.setTitle(getTitle());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -90,6 +95,32 @@ public class ItemListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        switch(item.getItemId()) {
+            case R.id.action_about:
+                AlertDialog.Builder lAlertDialog = new AlertDialog.Builder(this);
+                lAlertDialog.setTitle("Staff\nVersion " + this.getString(R.string.version));
+                lAlertDialog.setMessage("Affichage de la présence des staffeurs\n© AIT 2018 (pascalh)\n\nassistanceinformatiquetoulouse@gmail.com");
+                lAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }});
+                // TODO : changer l'image et utiliser l'icone de l'application
+                lAlertDialog.setIcon(R.drawable.ic_roulezrose);
+                lAlertDialog.create().show();
+                break;
+        }
+        return(true);
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {

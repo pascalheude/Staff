@@ -7,19 +7,14 @@
     android:fitsSystemWindows="true"
     tools:context=".ItemListActivity">
 
-    <!--android.support.design.widget.AppBarLayout
-        android:titre="@+titre/app_bar"
+    <!--android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:titre="@+titre/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout-->
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" /-->
 
     <FrameLayout
         android:id="@+id/frameLayout"
@@ -27,7 +22,10 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <TextView
-            android:id="@+id/randonnee"
+            android:layout_width="match_parent"
+            android:layout_height="40sp" />
+        <TextView
+            android:id="@+id/dateRandonnee"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
