@@ -7,15 +7,6 @@
     android:fitsSystemWindows="true"
     tools:context=".ItemListActivity">
 
-    <!--android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" /-->
-
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
@@ -41,7 +32,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_fleche_droite" />
+        android:src="@drawable/ic_fleche_droite_rouge"
+        app:backgroundTint="@color/colorLightGrey"/>
         <!--android:src="@android:drawable/ic_dialog_email" /-->
 
 </android.support.design.widget.CoordinatorLayout>

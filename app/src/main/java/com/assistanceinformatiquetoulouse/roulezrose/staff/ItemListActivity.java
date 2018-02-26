@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.RecyclerView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -52,41 +51,54 @@ import java.util.List;
 public class ItemListActivity extends AppCompatActivity {
     // Attributs privés
     private boolean mTwoPane;
-    private Toolbar pToolbar;
     private View pRecyclerView;
     private TextView pTextViewDate;
+    private FloatingActionButton pFloatingActionButton;
+    private SimpleItemRecyclerViewAdapter pSimpleItemRecyclerViewAdapter1;
+    private SimpleItemRecyclerViewAdapter pSimpleItemRecyclerViewAdapter2;
+    private boolean pPremiereRandonnee;
     private String pURL;
-    private ArrayList<Staffeur> pListeStaffeur;
+    private String pDate1String;
+    private String pDate2String;
+    private ArrayList<Staffeur> pListeStaffeur1;
+    private ArrayList<Staffeur> pListeStaffeur2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
-        //pToolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(pToolbar);
         pRecyclerView = findViewById(R.id.item_list);
         pTextViewDate = (TextView) findViewById(R.id.dateRandonnee);
+        pFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        pPremiereRandonnee = true;
         pURL = getString(R.string.URL);
-        pListeStaffeur = new ArrayList<>();
+        pListeStaffeur1 = new ArrayList<>();
+        pListeStaffeur2 = new ArrayList<>();
         assert pRecyclerView != null;
         // Lire la base de données du staff
         DownloadTask downloadTask = new DownloadTask();
         downloadTask.execute(pURL);
 
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        pFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (pPremiereRandonnee) {
+                    pFloatingActionButton.setImageResource(R.drawable.ic_fleche_gauche_rouge);
+                    pTextViewDate.setText(pDate2String);
+                    ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter2);
+                    pPremiereRandonnee = false;
+                }
+                else {
+                    pFloatingActionButton.setImageResource(R.drawable.ic_fleche_droite_rouge);
+                    pTextViewDate.setText(pDate1String);
+                    ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter1);
+                    pPremiereRandonnee = true;
+                }
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                //        .setAction("Action", null).show();
             }
         });
-
-        // SimpleAdapter View pRecyclerView = findViewById(R.titre.item_list);
-        // SimpleAdapter assert pRecyclerView != null;
-        // SimpleAdapter setupRecyclerView((RecyclerView) pRecyclerView);
 
         if (findViewById(R.id.item_detail_container) != null) {
             // The detail container view will be present only in the
@@ -132,7 +144,7 @@ public class ItemListActivity extends AppCompatActivity {
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private final ArrayList<Staffeur> pListeStaffeur;
-        // TBR : private final List<HashMap<String, Object>> pListeStaffeur;
+        // TBR : private final List<HashMap<String, Object>> pListeStaffeur1;
 
         public SimpleItemRecyclerViewAdapter(ArrayList<Staffeur> liste_staffeur) {
         // TBR : public SimpleItemRecyclerViewAdapter(List<HashMap<String, Object>> items) {
@@ -267,7 +279,6 @@ public class ItemListActivity extends AppCompatActivity {
             SimpleDateFormat lSimpleDateFormatIn;
             SimpleDateFormat lSimpleDateFormatOut;
             Date lDate;
-            String lString;
             try
             {
                 lJSONString = lireDonneesDepuisURL(url[0]);
@@ -276,46 +287,62 @@ public class ItemListActivity extends AppCompatActivity {
                     lGlobalJSONObject = new JSONObject(lJSONString);
                     try {
                         lSimpleDateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        lDate = lSimpleDateFormatIn.parse(lGlobalJSONObject.getString("Date"));
+                        lDate = lSimpleDateFormatIn.parse(lGlobalJSONObject.getString("Date1"));
                         lSimpleDateFormatOut = new SimpleDateFormat("EEE dd MMM yyyy");
-                        lString = lSimpleDateFormatOut.format(lDate);
+                        pDate1String = lSimpleDateFormatOut.format(lDate);
+                        lDate = lSimpleDateFormatIn.parse(lGlobalJSONObject.getString("Date2"));
+                        pDate2String = lSimpleDateFormatOut.format(lDate);
                     } catch (Exception e) {
-                        lString = "Prochaine randonnée";
+                        pDate1String = "Prochaine randonnée";
+                        pDate2String = "Prochaine randonnée";
                     }
-                    lListe_staffeur = lGlobalJSONObject.getJSONArray("Staffeurs");
+                    lListe_staffeur = lGlobalJSONObject.getJSONArray("Staffeurs1");
                     for (int i = 0; i < lListe_staffeur.length(); i++) {
                         Staffeur lStaffeur;
                         lJSONObjet = lListe_staffeur.getJSONObject(i);
                         lStaffeur = new Staffeur(lJSONObjet.getString("nom"),
                                 lJSONObjet.getString("présence"),
                                 lJSONObjet.getString("conducteur"));
-                        pListeStaffeur.add(lStaffeur);
+                        pListeStaffeur1.add(lStaffeur);
+                    }
+                    lListe_staffeur = lGlobalJSONObject.getJSONArray("Staffeurs2");
+                    for (int i = 0; i < lListe_staffeur.length(); i++) {
+                        Staffeur lStaffeur;
+                        lJSONObjet = lListe_staffeur.getJSONObject(i);
+                        lStaffeur = new Staffeur(lJSONObjet.getString("nom"),
+                                lJSONObjet.getString("présence"),
+                                lJSONObjet.getString("conducteur"));
+                        pListeStaffeur2.add(lStaffeur);
                     }
                 }
                 else
                 {
-                    lString = "Impossible d'accéder au serveur de données";
+                    pDate1String = "Impossible d'accéder au serveur de données";
+                    pDate2String = "Impossible d'accéder au serveur de données";
                 }
             }
             catch(IOException e)
             {
-                lString = e.toString();
+                pDate1String = e.toString();
+                pDate2String = e.toString();
                 Log.d("Background Task", e.toString());
             }
             catch(JSONException e)
             {
-                lString = "Erreur JSON";
+                pDate1String = "Erreur JSON";
+                pDate2String = "Erreur JSON";
                 e.printStackTrace();
             }
-            return(lString);
+            return(pDate1String);
         }
 
         @Override
         protected void onPostExecute(String result) {
             pTextViewDate.setText(result);
             // TODO : n'afficher que si la chaine result est différente de null
-            SimpleItemRecyclerViewAdapter lSimpleItemRecyclerViewAdapter = new SimpleItemRecyclerViewAdapter(pListeStaffeur);
-            ((RecyclerView)pRecyclerView).setAdapter(lSimpleItemRecyclerViewAdapter);
+            pSimpleItemRecyclerViewAdapter1 = new SimpleItemRecyclerViewAdapter(pListeStaffeur1);
+            pSimpleItemRecyclerViewAdapter2 = new SimpleItemRecyclerViewAdapter(pListeStaffeur2);
+            ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter1);
             // Analyser les données reçues et charger les images
             // TBR : ListViewLoaderTask lListViewLoaderTask = new ListViewLoaderTask();
             // TBR : lListViewLoaderTask.execute(result);
