@@ -36,10 +36,13 @@ public class ItemDetailActivity extends AppCompatActivity {
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
+        if (actionBar != null)
+        {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
+        else
+        {
+        }
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
         // (e.g. when rotating the screen from portrait to landscape).
@@ -49,26 +52,31 @@ public class ItemDetailActivity extends AppCompatActivity {
         //
         // http://developer.android.com/guide/components/fragments.html
         //
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null)
+        {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            int position = getIntent().getIntExtra(ItemDetailFragment.ARG_ITEM_ID, 0);
-            arguments.putInt(ItemDetailFragment.ARG_ITEM_ID, position);
-            //arguments.putString(ItemDetailFragment.ARG_ITEM_ID,
-            //        getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
+            arguments.putInt(getString(R.string.randonnee), getIntent().getIntExtra(getString(R.string.randonnee), 0));
+            arguments.putString(getString(R.string.nom), getIntent().getStringExtra(getString(R.string.nom)));
+            arguments.putString(getString(R.string.presence), getIntent().getStringExtra(getString(R.string.presence)));
+            arguments.putInt(getString(R.string.conducteur), getIntent().getIntExtra(getString(R.string.conducteur), 0));
             ItemDetailFragment fragment = new ItemDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.item_detail_container, fragment)
                     .commit();
         }
+        else
+        {
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home) {
+        if (id == android.R.id.home)
+        {
             // This ID represents the Home or Up button. In the case of this
             // activity, the Up button is shown. For
             // more contenu, see the Navigation pattern on Android Design:
@@ -76,8 +84,11 @@ public class ItemDetailActivity extends AppCompatActivity {
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
             navigateUpTo(new Intent(this, ItemListActivity.class));
-            return true;
+            return(true);
         }
-        return super.onOptionsItemSelected(item);
+        else
+        {
+        }
+        return(super.onOptionsItemSelected(item));
     }
 }

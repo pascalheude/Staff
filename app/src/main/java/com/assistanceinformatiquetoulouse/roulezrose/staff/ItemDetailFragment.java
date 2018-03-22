@@ -1,30 +1,39 @@
 package com.assistanceinformatiquetoulouse.roulezrose.staff;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.widget.ImageView;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.assistanceinformatiquetoulouse.roulezrose.staff.NewsContent;
-
-import java.util.HashMap;
-
-// TODO : ajouter l'image
-// TODO : changer le TextView en WebView
 // Class ItemDetailFragment
 public class ItemDetailFragment extends Fragment {
     // Attibuts publics
-    public static final String ARG_ITEM_ID = "item_id";
     // Attributs privés
-    private NewsContent.NewsItem mItem;
+    protected ProgressDialog pProgressDialog;
+    private Staffeur pStaffeur;
+    private TextView pTextViewPresence;
+    private CheckBox pCheckBoxPresent;
+    private TextView pTextViewConducteur;
+    private TextView pTextViewConducteur1;
+    private CheckBox pCheckBoxConducteur;
+    private TextView pTextViewJaune1;
+    private CheckBox pCheckBoxJaune;
+    private TextView pTextViewEclaireur1;
+    private CheckBox pCheckBoxEclaireur;
+    private TextView pTextViewMeneur1;
+    private CheckBox pCheckBoxMeneur;
+    private TextView pTextViewLanterne1;
+    private CheckBox pCheckBoxLanterne;
+    private Button pButtonUpdate;
+    private Context pContext;
 
     // Constructeur
     public ItemDetailFragment() {
@@ -32,31 +41,30 @@ public class ItemDetailFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        HashMap<String, Object> lHashMap;
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
+        if (getArguments().containsKey(getString(R.string.randonnee)))
+        {
+            pStaffeur = new Staffeur(getArguments().getString(getString(R.string.nom)),
+                                     getArguments().getString(getString(R.string.presence)),
+                                     getArguments().getInt(getString(R.string.conducteur)),
+                                     0);
             // Load the dummy date specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load date from a date provider.
-            lHashMap = NewsContent.aListItem.get(getArguments().getInt(ARG_ITEM_ID));
-            String s = (String) lHashMap.get("image");
-            mItem = new NewsContent.NewsItem((String) lHashMap.get("titre"),
-                    (String) lHashMap.get("date"),
-                    (String) lHashMap.get("contenu"),
-                    s);
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-            if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.pTitre);
+            if (appBarLayout != null)
+            {
+                appBarLayout.setTitle(pStaffeur.lireNom());
             }
-            else {
+            else
+            {
             }
-// TODO : déplacer les 3 lignes suivantes dans la méthode onCreateView et ajouter une image dans item_detail.xml
-            ImageView lImageView = (ImageView) activity.findViewById(R.id.imageView);
-            Bitmap lBitmap = BitmapFactory.decodeFile(mItem.pImage);
-            lImageView.setImageBitmap(lBitmap);
+        }
+        else
+        {
         }
     }
 
@@ -64,17 +72,166 @@ public class ItemDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.item_detail, container, false);
+        pContext = getContext();
+        pTextViewPresence = (TextView) rootView.findViewById(R.id.textViewPresence);
+        pCheckBoxPresent = (CheckBox) rootView.findViewById(R.id.checkBoxPresent);
+        pTextViewConducteur = (TextView) rootView.findViewById(R.id.textViewConducteur);
+        pTextViewConducteur1 = (TextView) rootView.findViewById(R.id.textViewConducteur1);
+        pCheckBoxConducteur = (CheckBox) rootView.findViewById(R.id.checkBoxConducteur);
+        pTextViewJaune1 = (TextView) rootView.findViewById(R.id.textViewJaune1);
+        pCheckBoxJaune = (CheckBox) rootView.findViewById(R.id.checkBoxJaune);
+        pTextViewEclaireur1 = (TextView) rootView.findViewById(R.id.textViewEclaireur1);
+        pCheckBoxEclaireur = (CheckBox) rootView.findViewById(R.id.checkBoxEclaireur);
+        pTextViewMeneur1 = (TextView) rootView.findViewById(R.id.textViewMeneur1);
+        pCheckBoxMeneur = (CheckBox) rootView.findViewById(R.id.checkBoxMeneur);
+        pTextViewLanterne1 = (TextView) rootView.findViewById(R.id.textViewLanterne1);
+        pCheckBoxLanterne = (CheckBox) rootView.findViewById(R.id.checkBoxLanterne);
+        pButtonUpdate = (Button) rootView.findViewById(R.id.buttonUpdate);
 
+        pCheckBoxConducteur.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (pCheckBoxConducteur.isChecked())
+                {
+                    pTextViewConducteur1.setText("+1");
+                    pCheckBoxPresent.setChecked(true);
+                    pTextViewJaune1.setText("");
+                    pCheckBoxJaune.setChecked(false);
+                    pTextViewEclaireur1.setText("");
+                    pCheckBoxEclaireur.setChecked(false);
+                    pTextViewMeneur1.setText("");
+                    pCheckBoxMeneur.setChecked(false);
+                    pTextViewLanterne1.setText("");
+                    pCheckBoxLanterne.setChecked(false);
+                }
+                else
+                {
+                    pTextViewConducteur1.setText("");
+                }
+            }
+        });
+        pCheckBoxJaune.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (pCheckBoxJaune.isChecked())
+                {
+                    pTextViewJaune1.setText("+1");
+                    pCheckBoxPresent.setChecked(true);
+                    pTextViewConducteur1.setText("");
+                    pCheckBoxConducteur.setChecked(false);
+                    pTextViewEclaireur1.setText("");
+                    pCheckBoxEclaireur.setChecked(false);
+                    pTextViewMeneur1.setText("");
+                    pCheckBoxMeneur.setChecked(false);
+                    pTextViewLanterne1.setText("");
+                    pCheckBoxLanterne.setChecked(false);
+                }
+                else
+                {
+                    pTextViewJaune1.setText("");
+                    pCheckBoxPresent.setChecked(false);
+                }
+            }
+        });
+        pCheckBoxEclaireur.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (pCheckBoxEclaireur.isChecked())
+                {
+                    pTextViewEclaireur1.setText("+1");
+                    pCheckBoxPresent.setChecked(true);
+                    pTextViewConducteur1.setText("");
+                    pCheckBoxConducteur.setChecked(false);
+                    pTextViewJaune1.setText("");
+                    pCheckBoxJaune.setChecked(false);
+                    pTextViewMeneur1.setText("");
+                    pCheckBoxMeneur.setChecked(false);
+                    pTextViewLanterne1.setText("");
+                    pCheckBoxLanterne.setChecked(false);
+                }
+                else
+                {
+                    pTextViewEclaireur1.setText("");
+                    pCheckBoxPresent.setChecked(false);
+                }
+            }
+        });
+        pCheckBoxMeneur.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (pCheckBoxMeneur.isChecked())
+                {
+                    pTextViewMeneur1.setText("+1");
+                    pCheckBoxPresent.setChecked(true);
+                    pTextViewConducteur1.setText("");
+                    pCheckBoxConducteur.setChecked(false);
+                    pTextViewJaune1.setText("");
+                    pCheckBoxJaune.setChecked(false);
+                    pTextViewEclaireur1.setText("");
+                    pCheckBoxEclaireur.setChecked(false);
+                    pTextViewLanterne1.setText("");
+                    pCheckBoxLanterne.setChecked(false);
+                }
+                else
+                {
+                    pTextViewMeneur1.setText("");
+                    pCheckBoxPresent.setChecked(false);
+                }
+            }
+        });
+        pCheckBoxLanterne.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (pCheckBoxLanterne.isChecked())
+                {
+                    pTextViewLanterne1.setText("+1");
+                    pCheckBoxPresent.setChecked(true);
+                    pTextViewConducteur1.setText("");
+                    pCheckBoxConducteur.setChecked(false);
+                    pTextViewJaune1.setText("");
+                    pCheckBoxJaune.setChecked(false);
+                    pTextViewEclaireur1.setText("");
+                    pCheckBoxEclaireur.setChecked(false);
+                    pTextViewMeneur1.setText("");
+                    pCheckBoxMeneur.setChecked(false);
+                }
+                else
+                {
+                    pTextViewLanterne1.setText("");
+                    pCheckBoxPresent.setChecked(false);
+                }
+            }
+        });
+        pButtonUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pProgressDialog = ProgressDialog.show(pContext, "Patience",
+                        "Mise à jour de la base de données sur le serveur", true);
+
+                new Thread((new Runnable() {
+                    @Override
+                    public void run() {
+                        // TODO : ajouter la mise à jour de la base de données à la place du sleep
+                        try {
+                            Thread.sleep(3000);
+                            pProgressDialog.dismiss();
+                        }
+                        catch (InterruptedException e) {
+                        }
+                    }
+                })).start();
+            }
+        });
         // Show the dummy date as text in a TextView.
-        if (mItem != null) {
-            // ((TextView) rootView.findViewById(R.id.item_detail)).setText(aStaffeur.pContenu);
-            ((WebView) rootView.findViewById(R.id.item_detail)).loadData(mItem.pContenu, "text/html", null);
-            ImageView lImageView = (ImageView) rootView.findViewById(R.id.imageView2);
-            Bitmap lBitmap = BitmapFactory.decodeFile(mItem.pImage);
-            lImageView.setImageBitmap(lBitmap);
+        if (pStaffeur != null)
+        {
+            //((WebView) rootView.findViewById(R.id.item_detail)).loadData(pStaffeur.lireNom(), "text/html", null);
+            pTextViewPresence.setText(pStaffeur.lirePresence());
+            pTextViewConducteur.setText(String.valueOf(pStaffeur.lireConducteur()));
         }
-        else {
+        else
+        {
         }
-        return rootView;
+        return(rootView);
     }
 }

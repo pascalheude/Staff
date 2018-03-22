@@ -34,6 +34,5 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_fleche_droite_rouge"
         app:backgroundTint="@color/colorLightGrey"/>
-        <!--android:src="@android:drawable/ic_dialog_email" /-->
 
 </android.support.design.widget.CoordinatorLayout>

@@ -3,8 +3,6 @@ package com.assistanceinformatiquetoulouse.roulezrose.staff;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,14 +10,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -27,8 +23,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,8 +31,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * An activity representing a list of Items. This activity
@@ -123,7 +115,7 @@ public class ItemListActivity extends AppCompatActivity {
             case R.id.action_about:
                 AlertDialog.Builder lAlertDialog = new AlertDialog.Builder(this);
                 lAlertDialog.setTitle("Staff\nVersion " + this.getString(R.string.version));
-                lAlertDialog.setMessage("Affichage de la présence des staffeurs\n© AIT 2018 (pascalh)\n\nassistanceinformatiquetoulouse@gmail.com");
+                lAlertDialog.setMessage("Gestion de la présence des staffeurs\n© AIT 2018 (pascalh)\n\nassistanceinformatiquetoulouse@gmail.com");
                 lAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                     }});
@@ -144,10 +136,8 @@ public class ItemListActivity extends AppCompatActivity {
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private final ArrayList<Staffeur> pListeStaffeur;
-        // TBR : private final List<HashMap<String, Object>> pListeStaffeur1;
 
         public SimpleItemRecyclerViewAdapter(ArrayList<Staffeur> liste_staffeur) {
-        // TBR : public SimpleItemRecyclerViewAdapter(List<HashMap<String, Object>> items) {
             pListeStaffeur = liste_staffeur;
         }
 
@@ -160,23 +150,18 @@ public class ItemListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
-            String lImage;
             holder.aStaffeur = pListeStaffeur.get(position);
             holder.aNomView.setText((String) holder.aStaffeur.lireNom());
-            // TBR : holder.aNomView.setText((String) holder.aStaffeur.get("titre"));
             holder.aPresenceView.setText((String) holder.aStaffeur.lirePresence());
-            holder.aConducteurView.setText((String) holder.aStaffeur.lireConducteur());
-            // TBR : holder.aPresenceView.setText((String) holder.aStaffeur.get("date"));
-            // TBR : lImage = (String) holder.aStaffeur.get("image");
-            // TBR : Bitmap lBitmap = BitmapFactory.decodeFile(lImage);
-            // TBR : holder.mImageView.setImageBitmap(lBitmap);
+            holder.aStatView.setText((String) holder.aStaffeur.lireStat());
 
             holder.aView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
-                        arguments.putInt(ItemDetailFragment.ARG_ITEM_ID, position);
+                        // TODO : ajouter les attributs de la classe staffeur
+                        arguments.putInt(getString(R.string.randonnee), position);
                         //arguments.putString(ItemDetailFragment.ARG_ITEM_ID, (String) holder.aStaffeur.get("titre"));
                         ItemDetailFragment fragment = new ItemDetailFragment();
                         fragment.setArguments(arguments);
@@ -187,8 +172,10 @@ public class ItemListActivity extends AppCompatActivity {
                     else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, ItemDetailActivity.class);
-                        intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, position);
-                        //intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, (String) holder.aStaffeur.get("titre"));
+                        intent.putExtra(getString(R.string.randonnee), position);
+                        intent.putExtra(getString(R.string.nom), holder.aStaffeur.lireNom());
+                        intent.putExtra(getString(R.string.presence), holder.aStaffeur.lirePresence());
+                        intent.putExtra(getString(R.string.conducteur), holder.aStaffeur.lireConducteur());
                         context.startActivity(intent);
                     }
                 }
@@ -204,18 +191,15 @@ public class ItemListActivity extends AppCompatActivity {
             public View aView;
             public TextView aNomView;
             public TextView aPresenceView;
-            public TextView aConducteurView;
-            public ImageView mImageView;
+            public TextView aStatView;
             public Staffeur aStaffeur;
-            // TBR : public HashMap<String, Object> aStaffeur;
 
             public ViewHolder(View view) {
                 super(view);
                 aView = view;
                 aNomView = (TextView) view.findViewById(R.id.nom);
                 aPresenceView = (TextView) view.findViewById(R.id.presence);
-                aConducteurView = (TextView) view.findViewById(R.id.conducteur);
-                // TBR : mImageView = (ImageView) view.findViewById(R.id.imageViewNews);
+                aStatView = (TextView) view.findViewById(R.id.stat);
             }
 
             @Override
@@ -272,6 +256,7 @@ public class ItemListActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... url) {
+            // TODO : récupérer aussi le rando_id
             String lJSONString = "";
             JSONObject lGlobalJSONObject;
             JSONObject lJSONObjet;
@@ -302,7 +287,8 @@ public class ItemListActivity extends AppCompatActivity {
                         lJSONObjet = lListe_staffeur.getJSONObject(i);
                         lStaffeur = new Staffeur(lJSONObjet.getString("nom"),
                                 lJSONObjet.getString("présence"),
-                                lJSONObjet.getString("conducteur"));
+                                lJSONObjet.getInt("conducteur"),
+                                lJSONObjet.getInt("présent"));
                         pListeStaffeur1.add(lStaffeur);
                     }
                     lListe_staffeur = lGlobalJSONObject.getJSONArray("Staffeurs2");
@@ -311,7 +297,8 @@ public class ItemListActivity extends AppCompatActivity {
                         lJSONObjet = lListe_staffeur.getJSONObject(i);
                         lStaffeur = new Staffeur(lJSONObjet.getString("nom"),
                                 lJSONObjet.getString("présence"),
-                                lJSONObjet.getString("conducteur"));
+                                lJSONObjet.getInt("conducteur"),
+                                lJSONObjet.getInt("présent"));
                         pListeStaffeur2.add(lStaffeur);
                     }
                 }
@@ -343,123 +330,6 @@ public class ItemListActivity extends AppCompatActivity {
             pSimpleItemRecyclerViewAdapter1 = new SimpleItemRecyclerViewAdapter(pListeStaffeur1);
             pSimpleItemRecyclerViewAdapter2 = new SimpleItemRecyclerViewAdapter(pListeStaffeur2);
             ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter1);
-            // Analyser les données reçues et charger les images
-            // TBR : ListViewLoaderTask lListViewLoaderTask = new ListViewLoaderTask();
-            // TBR : lListViewLoaderTask.execute(result);
-        }
-    }
-
-    // Private class ListViewLoaderTask
-    // SimpleAdapter private class ListViewLoaderTask  extends AsyncTask<String, Void, SimpleAdapter> {
-    private class ListViewLoaderTask  extends AsyncTask<String, Void, List<HashMap<String, Object>>> {
-        // Attributs privés
-        JSONArray pJSONArray;
-
-        @Override
-        // SimpleAdapter protected SimpleAdapter doInBackground(String... chaine) {
-        protected List<HashMap<String, Object>> doInBackground(String... chaine) {
-            // A list object to store the parsed countries list
-            List<HashMap<String, Object>> liste_news = null;
-            try {
-                pJSONArray = new JSONArray(chaine[0]);
-                // Instantiating json parser class
-                JSONNews lJSONNews = new JSONNews(pURL);
-                // Getting the parsed data as a List construct
-                liste_news = lJSONNews.analyser(pJSONArray);
-            }
-            catch(Exception e) {
-                Log.d("Exception", e.toString());
-            }
-            // SimpleAdapter Keys used in Hashmap
-            // SimpleAdapter String[] from = { "titre", "image", "date"};
-            // SimpleAdapter Ids of views in listview_layout
-            // SimpleAdapter int[] to = { R.titre.textViewNewsTitre, R.titre.imageViewNews, R.titre.textViewNewsDate};
-            // SimpleAdapter Instantiating an adapter to store each items
-            // SimpleAdapter R.layout.listview_layout defines the layout of each item
-            // SimpleAdapter SimpleAdapter adapter = new SimpleAdapter(getBaseContext(), liste_news, R.layout.listview_news, from, to);
-            // SimpleAdapter return(adapter);
-            return(liste_news);
-        }
-
-        @Override
-        // SimpleAdapter protected void onPostExecute(SimpleAdapter adapter) {
-        protected void onPostExecute(List<HashMap<String, Object>> hashMapList) {
-            int i;
-            // SimpleAdapter Mise en place de l'adapter pour la liste des news
-            // SimpleAdapter pListView.setAdapter(adapter);
-            // Chargement des toutes les images par une boucle
-            // SimpleAdapter for(i=0;i < adapter.getCount();i++) {
-            for(i=0;i < hashMapList.size();i++) {
-                // SimpleAdapter HashMap<String, Object> lHashMap = (HashMap<String, Object>) adapter.getItem(i);
-                HashMap<String, Object> lHashMap = (HashMap<String, Object>) hashMapList.get(i);
-                NewsContent.addNewsItem(lHashMap);
-                String lImageURL = (String) lHashMap.get("image");
-                ImageLoaderTask imageLoaderTask = new ImageLoaderTask();
-                lHashMap.put("image", lImageURL);
-                lHashMap.put("position", i);
-                // Charger l'image et mettre à jour la liste des news
-                imageLoaderTask.execute(lHashMap);
-            }
-        }
-    }
-
-    // Private class ImageLoaderTask
-    private class ImageLoaderTask extends AsyncTask<HashMap<String, Object>, Void, HashMap<String, Object>>{
-        @Override
-        protected HashMap<String, Object> doInBackground(HashMap<String, Object>... hashMap) {
-            InputStream lInputStream = null;
-            String lImageURL = (String) hashMap[0].get("image");
-            int position = (Integer) hashMap[0].get("position");
-            URL lURL;
-            try {
-                lURL = new URL(lImageURL);
-
-                // Création d'une connexion http avec l'URL
-                HttpURLConnection urlConnection = (HttpURLConnection) lURL.openConnection();
-                // Connexion à l'URL
-                urlConnection.connect();
-                // Téléchargement des données contenues (image) dans l'URL
-                lInputStream = urlConnection.getInputStream();
-
-                // Copie de l'image dans un répertoire local
-                File cacheDirectory = getBaseContext().getCacheDir();
-                File lFile = new File(cacheDirectory.getPath() + "/image_" + position + ".png");
-                FileOutputStream lFileOutputStream = new FileOutputStream(lFile);
-                Bitmap lBitmap = BitmapFactory.decodeStream(lInputStream);
-                lBitmap.compress(Bitmap.CompressFormat.PNG, 100, lFileOutputStream);
-                lFileOutputStream.flush();
-                lFileOutputStream.close();
-
-                // Création d'un HashMap pour mémoriser le chemin d'accès à l'image et sa position dans la ListView
-                HashMap<String, Object> lHashMap = new HashMap<String, Object>();
-                lHashMap.put("image", lFile.getPath());
-                lHashMap.put("position", position);
-
-                // Renvoie le HashMap contenant le chemin d'accès à l'image et la position
-                return(lHashMap);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-            return(null);
-        }
-
-        @Override
-        protected void onPostExecute(HashMap<String, Object> result) {
-            // Lit le chemin d'accès à l'image téléchargée
-            String lChemin = (String) result.get("image");
-            // Lit la position de l'image téléchargée dans la ListView
-            int position = (Integer) result.get("position");
-            // SimpleAdapter Récupère le HashMap associé dans l'Apadater de la ListVieww
-            // SimpleAdapter SimpleAdapter lSimpleAdapter = (SimpleAdapter) pListView.getAdapter();
-            // SimpleAdapter HashMap<String, Object> lHashMap = (HashMap<String, Object>) lSimpleAdapter.getItem(position);
-            // Ré-écrit le chemin d'accès à l'image téléchargée dans le HashMap
-            HashMap<String, Object> lHashMap = result;
-            lHashMap.put("image", lChemin);
-            NewsContent.updateImage(position, lChemin);
-            // Mise à jour de la ListView
-            // SimpleAdapter lSimpleAdapter.notifyDataSetChanged();
-            setupRecyclerView((RecyclerView) pRecyclerView);
         }
     }
 }

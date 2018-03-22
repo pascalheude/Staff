@@ -2,21 +2,211 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:context="com.assistanceinformatiquetoulouse.roulezrose.staff.ItemDetailFragment" >
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="60dp"
-        android:layout_height="60dp" />
+    <TextView
+        android:id="@+id/textView1"
+        android:text="Présence : "
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-    <WebView
-    android:id="@+id/item_detail"
-    style="?android:attr/textAppearanceLarge"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
-    android:textIsSelectable="true"
-    tools:context="com.assistanceinformatiquetoulouse.roulezrose.staff.ItemDetailFragment"
-        android:layout_below="@+id/imageView2" />
+    <TextView
+        android:id="@+id/textViewPresence"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/textView1" />
+
+    <CheckBox
+        android:id="@+id/checkBoxPresent"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:checked="false" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:text="Conducteur : "
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView1" />
+
+    <TextView
+        android:id="@+id/textViewConducteur"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView1"
+        android:layout_toRightOf="@+id/textView2" />
+
+    <TextView
+        android:id="@+id/textViewConducteur1"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView1"
+        android:layout_toRightOf="@+id/textViewConducteur" />
+
+    <CheckBox
+        android:id="@+id/checkBoxConducteur"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkBoxPresent"
+        android:layout_alignParentRight="true"
+        android:checked="false" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:text="Jaune : "
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView2" />
+
+    <TextView
+        android:id="@+id/textViewJaune"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView2"
+        android:layout_toRightOf="@+id/textView3" />
+
+    <TextView
+        android:id="@+id/textViewJaune1"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView2"
+        android:layout_toRightOf="@+id/textViewJaune" />
+
+    <CheckBox
+        android:id="@+id/checkBoxJaune"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkBoxConducteur"
+        android:layout_alignParentRight="true"
+        android:checked="false" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:text="Eclaireur : "
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView3" />
+
+    <TextView
+        android:id="@+id/textViewEclaireur"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView3"
+        android:layout_toRightOf="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/textViewEclaireur1"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView3"
+        android:layout_toRightOf="@+id/textViewEclaireur" />
+
+    <CheckBox
+        android:id="@+id/checkBoxEclaireur"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkBoxJaune"
+        android:layout_alignParentRight="true"
+        android:checked="false" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:text="Meneur : "
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/textViewMeneur"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView4"
+        android:layout_toRightOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/textViewMeneur1"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView4"
+        android:layout_toRightOf="@+id/textViewMeneur" />
+
+    <CheckBox
+        android:id="@+id/checkBoxMeneur"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkBoxEclaireur"
+        android:layout_alignParentRight="true"
+        android:checked="false" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:text="Lanterne : "
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/textViewLanterne"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView5"
+        android:layout_toRightOf="@+id/textView6" />
+
+    <TextView
+        android:id="@+id/textViewLanterne1"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView5"
+        android:layout_toRightOf="@+id/textViewLanterne" />
+
+    <CheckBox
+        android:id="@+id/checkBoxLanterne"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkBoxMeneur"
+        android:layout_alignParentRight="true"
+        android:checked="false" />
+
+    <Button
+        android:id="@+id/buttonUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/textView6"
+        android:clickable="true"
+        android:text="Mise à jour"
+        android:textSize="16dp" />
 
 </RelativeLayout>

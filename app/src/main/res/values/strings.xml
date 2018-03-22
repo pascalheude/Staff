@@ -5,4 +5,8 @@
     <string name="title_item_detail">To be defined</string>
     <string name="URL">http://82.224.153.132/roulezrose/index_staff.php</string>
     <!--string name="URL">http://192.168.0.100/roulezrose/index_staff.php</string-->
+    <string name="randonnee">Rando_id</string>
+    <string name="nom">Nom</string>
+    <string name="presence">Présence</string>
+    <string name="conducteur">Conducteur</string>
 </resources>
