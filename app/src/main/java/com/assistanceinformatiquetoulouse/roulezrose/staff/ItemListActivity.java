@@ -26,7 +26,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -215,12 +215,12 @@ public class ItemListActivity extends AppCompatActivity {
         InputStream lInputStream = null;
         URL lURL = new URL(url);
         try {
-            // Creer une communication http pour communiquer avec l'URL
-            HttpURLConnection lHttpURLConnection = (HttpURLConnection) lURL.openConnection();
+            // Creer une communication https pour communiquer avec l'URL
+            HttpsURLConnection lHttpsURLConnection = (HttpsURLConnection) lURL.openConnection();
             // Connexion à l'URL
-            lHttpURLConnection.connect();
+            lHttpsURLConnection.connect();
             // Lire le flux depuis la connexion
-            lInputStream = lHttpURLConnection.getInputStream();
+            lInputStream = lHttpsURLConnection.getInputStream();
             BufferedReader lBufferedReader = new BufferedReader(new InputStreamReader(lInputStream));
             StringBuffer lStringBuffer  = new StringBuffer();
             String lLigne = "";
