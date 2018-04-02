@@ -24,14 +24,20 @@ public class ItemDetailFragment extends Fragment {
     private TextView pTextViewConducteur;
     private TextView pTextViewConducteur1;
     private CheckBox pCheckBoxConducteur;
+    private TextView pTextViewJaune;
     private TextView pTextViewJaune1;
     private CheckBox pCheckBoxJaune;
     private TextView pTextViewEclaireur1;
+    private TextView pTextViewEclaireur;
     private CheckBox pCheckBoxEclaireur;
+    private TextView pTextViewMeneur;
     private TextView pTextViewMeneur1;
     private CheckBox pCheckBoxMeneur;
+    private TextView pTextViewLanterne;
     private TextView pTextViewLanterne1;
     private CheckBox pCheckBoxLanterne;
+    private TextView pTextViewPresent;
+    private TextView pTextViewPresent1;
     private Button pButtonUpdate;
     private Context pContext;
 
@@ -48,7 +54,11 @@ public class ItemDetailFragment extends Fragment {
             pStaffeur = new Staffeur(getArguments().getString(getString(R.string.nom)),
                                      getArguments().getString(getString(R.string.presence)),
                                      getArguments().getInt(getString(R.string.conducteur)),
-                                     0);
+                                     getArguments().getInt(getString(R.string.jaune)),
+                                     getArguments().getInt(getString(R.string.eclaireur)),
+                                     getArguments().getInt(getString(R.string.meneur)),
+                                     getArguments().getInt(getString(R.string.lanterne)),
+                                     getArguments().getInt(getString(R.string.present)));
             // Load the dummy date specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load date from a date provider.
@@ -78,14 +88,20 @@ public class ItemDetailFragment extends Fragment {
         pTextViewConducteur = (TextView) rootView.findViewById(R.id.textViewConducteur);
         pTextViewConducteur1 = (TextView) rootView.findViewById(R.id.textViewConducteur1);
         pCheckBoxConducteur = (CheckBox) rootView.findViewById(R.id.checkBoxConducteur);
+        pTextViewJaune = (TextView) rootView.findViewById(R.id.textViewJaune);
         pTextViewJaune1 = (TextView) rootView.findViewById(R.id.textViewJaune1);
         pCheckBoxJaune = (CheckBox) rootView.findViewById(R.id.checkBoxJaune);
+        pTextViewEclaireur = (TextView) rootView.findViewById(R.id.textViewEclaireur);
         pTextViewEclaireur1 = (TextView) rootView.findViewById(R.id.textViewEclaireur1);
         pCheckBoxEclaireur = (CheckBox) rootView.findViewById(R.id.checkBoxEclaireur);
+        pTextViewMeneur = (TextView) rootView.findViewById(R.id.textViewMeneur);
         pTextViewMeneur1 = (TextView) rootView.findViewById(R.id.textViewMeneur1);
         pCheckBoxMeneur = (CheckBox) rootView.findViewById(R.id.checkBoxMeneur);
+        pTextViewLanterne = (TextView) rootView.findViewById(R.id.textViewLanterne);
         pTextViewLanterne1 = (TextView) rootView.findViewById(R.id.textViewLanterne1);
         pCheckBoxLanterne = (CheckBox) rootView.findViewById(R.id.checkBoxLanterne);
+        pTextViewPresent = (TextView) rootView.findViewById(R.id.textViewPresent);
+        pTextViewPresent1 = (TextView) rootView.findViewById(R.id.textViewPresent1);
         pButtonUpdate = (Button) rootView.findViewById(R.id.buttonUpdate);
 
         pCheckBoxConducteur.setOnClickListener(new View.OnClickListener() {
@@ -94,6 +110,7 @@ public class ItemDetailFragment extends Fragment {
                 if (pCheckBoxConducteur.isChecked())
                 {
                     pTextViewConducteur1.setText("+1");
+                    pTextViewPresent1.setText("+1");
                     pCheckBoxPresent.setChecked(true);
                     pTextViewJaune1.setText("");
                     pCheckBoxJaune.setChecked(false);
@@ -107,6 +124,8 @@ public class ItemDetailFragment extends Fragment {
                 else
                 {
                     pTextViewConducteur1.setText("");
+                    pTextViewPresent1.setText("");
+                    pCheckBoxPresent.setChecked(false);
                 }
             }
         });
@@ -116,6 +135,7 @@ public class ItemDetailFragment extends Fragment {
                 if (pCheckBoxJaune.isChecked())
                 {
                     pTextViewJaune1.setText("+1");
+                    pTextViewPresent1.setText("+1");
                     pCheckBoxPresent.setChecked(true);
                     pTextViewConducteur1.setText("");
                     pCheckBoxConducteur.setChecked(false);
@@ -129,6 +149,7 @@ public class ItemDetailFragment extends Fragment {
                 else
                 {
                     pTextViewJaune1.setText("");
+                    pTextViewPresent1.setText("");
                     pCheckBoxPresent.setChecked(false);
                 }
             }
@@ -139,6 +160,7 @@ public class ItemDetailFragment extends Fragment {
                 if (pCheckBoxEclaireur.isChecked())
                 {
                     pTextViewEclaireur1.setText("+1");
+                    pTextViewPresent1.setText("+1");
                     pCheckBoxPresent.setChecked(true);
                     pTextViewConducteur1.setText("");
                     pCheckBoxConducteur.setChecked(false);
@@ -152,6 +174,7 @@ public class ItemDetailFragment extends Fragment {
                 else
                 {
                     pTextViewEclaireur1.setText("");
+                    pTextViewPresent1.setText("");
                     pCheckBoxPresent.setChecked(false);
                 }
             }
@@ -162,6 +185,7 @@ public class ItemDetailFragment extends Fragment {
                 if (pCheckBoxMeneur.isChecked())
                 {
                     pTextViewMeneur1.setText("+1");
+                    pTextViewPresent1.setText("+1");
                     pCheckBoxPresent.setChecked(true);
                     pTextViewConducteur1.setText("");
                     pCheckBoxConducteur.setChecked(false);
@@ -175,6 +199,7 @@ public class ItemDetailFragment extends Fragment {
                 else
                 {
                     pTextViewMeneur1.setText("");
+                    pTextViewPresent1.setText("");
                     pCheckBoxPresent.setChecked(false);
                 }
             }
@@ -185,6 +210,7 @@ public class ItemDetailFragment extends Fragment {
                 if (pCheckBoxLanterne.isChecked())
                 {
                     pTextViewLanterne1.setText("+1");
+                    pTextViewPresent1.setText("+1");
                     pCheckBoxPresent.setChecked(true);
                     pTextViewConducteur1.setText("");
                     pCheckBoxConducteur.setChecked(false);
@@ -198,6 +224,7 @@ public class ItemDetailFragment extends Fragment {
                 else
                 {
                     pTextViewLanterne1.setText("");
+                    pTextViewPresent1.setText("");
                     pCheckBoxPresent.setChecked(false);
                 }
             }
@@ -228,6 +255,11 @@ public class ItemDetailFragment extends Fragment {
             //((WebView) rootView.findViewById(R.id.item_detail)).loadData(pStaffeur.lireNom(), "text/html", null);
             pTextViewPresence.setText(pStaffeur.lirePresence());
             pTextViewConducteur.setText(String.valueOf(pStaffeur.lireConducteur()));
+            pTextViewJaune.setText(String.valueOf(pStaffeur.lireJaune()));
+            pTextViewEclaireur.setText(String.valueOf(pStaffeur.lireEclaireur()));
+            pTextViewMeneur.setText(String.valueOf(pStaffeur.lireMeneur()));
+            pTextViewLanterne.setText(String.valueOf(pStaffeur.lireLanterne()));
+            pTextViewPresent.setText(String.valueOf(pStaffeur.lirePresent()));
         }
         else
         {

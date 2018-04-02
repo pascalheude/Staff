@@ -7,6 +7,10 @@ public class Staffeur {
     private String pPresence;
     private String pStat;
     private int pConducteur;
+    private int pJaune;
+    private int pEclaireur;
+    private int pMeneur;
+    private int pLanterne;
     private int pPresent;
 
     // Constructeur
@@ -16,16 +20,24 @@ public class Staffeur {
         this.pPresence = "";
         this.pStat = "";
         this.pConducteur = 0;
+        this.pJaune = 0;
+        this.pEclaireur = 0;
+        this.pMeneur = 0;
+        this.pLanterne = 0;
         this.pPresent = 0;
     }
 
     // Constructeur
-    public Staffeur(String nom, String presence, int conducteur, int present)
+    public Staffeur(String nom, String presence, int conducteur, int jaune, int eclaireur, int meneur, int lanterne, int present)
     {
         float pourcentage;
         this.pNom = nom;
         this.pPresence = presence;
         this.pConducteur = conducteur;
+        this.pJaune = jaune;
+        this.pEclaireur = eclaireur;
+        this.pMeneur = meneur;
+        this.pLanterne = lanterne;
         this.pPresent = present;
         if ((conducteur != 0) && (present != 0)) {
             pourcentage = (float) 100.0 * (float) conducteur / (float) present;
@@ -65,4 +77,28 @@ public class Staffeur {
         return(this.pStat);
     }
 
+    // Méthode lireJaune
+    public int lireJaune() {
+        return(this.pJaune);
+    }
+
+    // Méthode lireEclaireur
+    public int lireEclaireur() {
+        return(this.pEclaireur);
+    }
+
+    // Méthode lireMeneur
+    public int lireMeneur() {
+        return(this.pMeneur);
+    }
+
+    // Méthode lireLanterne
+    public int lireLanterne() {
+        return(this.pLanterne);
+    }
+
+    // Méthode lirePrésent
+    public int lirePresent () {
+        return(this.pPresent);
+    }
 }

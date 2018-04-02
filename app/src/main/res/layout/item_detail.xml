@@ -198,13 +198,38 @@
         android:layout_alignParentRight="true"
         android:checked="false" />
 
+    <TextView
+        android:id="@+id/textView7"
+        android:text="Présent : "
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView6" />
+
+    <TextView
+        android:id="@+id/textViewPresent"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView6"
+        android:layout_toRightOf="@+id/textView7" />
+
+    <TextView
+        android:id="@+id/textViewPresent1"
+        android:textSize="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView6"
+        android:layout_toRightOf="@+id/textViewPresent" />
+
     <Button
         android:id="@+id/buttonUpdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/textView6"
+        android:layout_below="@+id/textView7"
         android:clickable="true"
         android:text="Mise à jour"
         android:textSize="16dp" />

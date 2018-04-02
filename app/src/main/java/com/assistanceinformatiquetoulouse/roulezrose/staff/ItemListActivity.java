@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import javax.net.ssl.HttpsURLConnection;
+
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -176,6 +178,11 @@ public class ItemListActivity extends AppCompatActivity {
                         intent.putExtra(getString(R.string.nom), holder.aStaffeur.lireNom());
                         intent.putExtra(getString(R.string.presence), holder.aStaffeur.lirePresence());
                         intent.putExtra(getString(R.string.conducteur), holder.aStaffeur.lireConducteur());
+                        intent.putExtra(getString(R.string.jaune), holder.aStaffeur.lireJaune());
+                        intent.putExtra(getString(R.string.eclaireur), holder.aStaffeur.lireEclaireur());
+                        intent.putExtra(getString(R.string.meneur), holder.aStaffeur.lireMeneur());
+                        intent.putExtra(getString(R.string.lanterne), holder.aStaffeur.lireLanterne());
+                        intent.putExtra(getString(R.string.present), holder.aStaffeur.lirePresent());
                         context.startActivity(intent);
                     }
                 }
@@ -215,12 +222,23 @@ public class ItemListActivity extends AppCompatActivity {
         InputStream lInputStream = null;
         URL lURL = new URL(url);
         try {
-            // Creer une communication https pour communiquer avec l'URL
-            HttpsURLConnection lHttpsURLConnection = (HttpsURLConnection) lURL.openConnection();
-            // Connexion à l'URL
-            lHttpsURLConnection.connect();
-            // Lire le flux depuis la connexion
-            lInputStream = lHttpsURLConnection.getInputStream();
+            if (lURL.getProtocol().contains("https")) {
+                // Creer une communication https pour communiquer avec l'URL
+                HttpsURLConnection lHttpsURLConnection = (HttpsURLConnection) lURL.openConnection();
+                // Connexion à l'URL
+                lHttpsURLConnection.connect();
+                // Lire le flux depuis la connexion
+                lInputStream = lHttpsURLConnection.getInputStream();
+            }
+            else
+            {
+                // Creer une communication http pour communiquer avec l'URL
+                HttpURLConnection lHttpURLConnection = (HttpURLConnection) lURL.openConnection();
+                // Connexion à l'URL
+                lHttpURLConnection.connect();
+                // Lire le flux depuis la connexion
+                lInputStream = lHttpURLConnection.getInputStream();
+            }
             BufferedReader lBufferedReader = new BufferedReader(new InputStreamReader(lInputStream));
             StringBuffer lStringBuffer  = new StringBuffer();
             String lLigne = "";
@@ -285,20 +303,28 @@ public class ItemListActivity extends AppCompatActivity {
                     for (int i = 0; i < lListe_staffeur.length(); i++) {
                         Staffeur lStaffeur;
                         lJSONObjet = lListe_staffeur.getJSONObject(i);
-                        lStaffeur = new Staffeur(lJSONObjet.getString("nom"),
-                                lJSONObjet.getString("présence"),
-                                lJSONObjet.getInt("conducteur"),
-                                lJSONObjet.getInt("présent"));
+                        lStaffeur = new Staffeur(lJSONObjet.getString(getString(R.string.nom)),
+                                lJSONObjet.getString(getString(R.string.presence)),
+                                lJSONObjet.getInt(getString(R.string.conducteur)),
+                                lJSONObjet.getInt(getString(R.string.jaune)),
+                                lJSONObjet.getInt(getString(R.string.eclaireur)),
+                                lJSONObjet.getInt(getString(R.string.meneur)),
+                                lJSONObjet.getInt(getString(R.string.lanterne)),
+                                lJSONObjet.getInt(getString(R.string.present)));
                         pListeStaffeur1.add(lStaffeur);
                     }
                     lListe_staffeur = lGlobalJSONObject.getJSONArray("Staffeurs2");
                     for (int i = 0; i < lListe_staffeur.length(); i++) {
                         Staffeur lStaffeur;
                         lJSONObjet = lListe_staffeur.getJSONObject(i);
-                        lStaffeur = new Staffeur(lJSONObjet.getString("nom"),
-                                lJSONObjet.getString("présence"),
-                                lJSONObjet.getInt("conducteur"),
-                                lJSONObjet.getInt("présent"));
+                        lStaffeur = new Staffeur(lJSONObjet.getString(getString(R.string.nom)),
+                                lJSONObjet.getString(getString(R.string.presence)),
+                                lJSONObjet.getInt(getString(R.string.conducteur)),
+                                lJSONObjet.getInt(getString(R.string.jaune)),
+                                lJSONObjet.getInt(getString(R.string.eclaireur)),
+                                lJSONObjet.getInt(getString(R.string.meneur)),
+                                lJSONObjet.getInt(getString(R.string.lanterne)),
+                                lJSONObjet.getInt(getString(R.string.present)));
                         pListeStaffeur2.add(lStaffeur);
                     }
                 }
