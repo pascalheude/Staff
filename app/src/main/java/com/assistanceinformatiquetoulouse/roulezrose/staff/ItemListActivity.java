@@ -52,6 +52,8 @@ public class ItemListActivity extends AppCompatActivity {
     private SimpleItemRecyclerViewAdapter pSimpleItemRecyclerViewAdapter2;
     private boolean pPremiereRandonnee;
     private String pURL;
+    private int pId1;
+    private int pId2;
     private String pDate1String;
     private String pDate2String;
     private ArrayList<Staffeur> pListeStaffeur1;
@@ -174,7 +176,13 @@ public class ItemListActivity extends AppCompatActivity {
                     else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, ItemDetailActivity.class);
-                        intent.putExtra(getString(R.string.randonnee), position);
+                        if (pPremiereRandonnee) {
+                            intent.putExtra(getString(R.string.randonnee), pId1);
+                        }
+                        else
+                        {
+                            intent.putExtra(getString(R.string.randonnee), pId2);
+                        }
                         intent.putExtra(getString(R.string.nom), holder.aStaffeur.lireNom());
                         intent.putExtra(getString(R.string.presence), holder.aStaffeur.lirePresence());
                         intent.putExtra(getString(R.string.conducteur), holder.aStaffeur.lireConducteur());
@@ -274,7 +282,6 @@ public class ItemListActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... url) {
-            // TODO : récupérer aussi le rando_id
             String lJSONString = "";
             JSONObject lGlobalJSONObject;
             JSONObject lJSONObjet;
@@ -299,6 +306,8 @@ public class ItemListActivity extends AppCompatActivity {
                         pDate1String = "Prochaine randonnée";
                         pDate2String = "Prochaine randonnée";
                     }
+                    pId1 = lGlobalJSONObject.getInt("Id1");
+                    pId2 = lGlobalJSONObject.getInt("Id2");
                     lListe_staffeur = lGlobalJSONObject.getJSONArray("Staffeurs1");
                     for (int i = 0; i < lListe_staffeur.length(); i++) {
                         Staffeur lStaffeur;

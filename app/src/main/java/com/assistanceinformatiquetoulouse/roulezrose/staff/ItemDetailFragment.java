@@ -18,6 +18,7 @@ public class ItemDetailFragment extends Fragment {
     // Attibuts publics
     // Attributs privés
     protected ProgressDialog pProgressDialog;
+    private int pId;
     private Staffeur pStaffeur;
     private TextView pTextViewPresence;
     private CheckBox pCheckBoxPresent;
@@ -51,6 +52,7 @@ public class ItemDetailFragment extends Fragment {
 
         if (getArguments().containsKey(getString(R.string.randonnee)))
         {
+            pId = getArguments().getInt("Rando_id");
             pStaffeur = new Staffeur(getArguments().getString(getString(R.string.nom)),
                                      getArguments().getString(getString(R.string.presence)),
                                      getArguments().getInt(getString(R.string.conducteur)),
