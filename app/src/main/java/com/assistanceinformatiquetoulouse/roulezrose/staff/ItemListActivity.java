@@ -68,7 +68,7 @@ public class ItemListActivity extends AppCompatActivity {
         pTextViewDate = (TextView) findViewById(R.id.dateRandonnee);
         pFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         pPremiereRandonnee = true;
-        pURL = getString(R.string.URL);
+        pURL = getString(R.string.in_URL);
         pListeStaffeur1 = new ArrayList<>();
         pListeStaffeur2 = new ArrayList<>();
         assert pRecyclerView != null;
@@ -184,6 +184,7 @@ public class ItemListActivity extends AppCompatActivity {
                             intent.putExtra(getString(R.string.randonnee), pId2);
                         }
                         intent.putExtra(getString(R.string.nom), holder.aStaffeur.lireNom());
+                        intent.putExtra(getString(R.string.id), holder.aStaffeur.lireId());
                         intent.putExtra(getString(R.string.presence), holder.aStaffeur.lirePresence());
                         intent.putExtra(getString(R.string.conducteur), holder.aStaffeur.lireConducteur());
                         intent.putExtra(getString(R.string.jaune), holder.aStaffeur.lireJaune());
@@ -313,6 +314,7 @@ public class ItemListActivity extends AppCompatActivity {
                         Staffeur lStaffeur;
                         lJSONObjet = lListe_staffeur.getJSONObject(i);
                         lStaffeur = new Staffeur(lJSONObjet.getString(getString(R.string.nom)),
+                                lJSONObjet.getInt(getString(R.string.id)),
                                 lJSONObjet.getString(getString(R.string.presence)),
                                 lJSONObjet.getInt(getString(R.string.conducteur)),
                                 lJSONObjet.getInt(getString(R.string.jaune)),
@@ -327,6 +329,7 @@ public class ItemListActivity extends AppCompatActivity {
                         Staffeur lStaffeur;
                         lJSONObjet = lListe_staffeur.getJSONObject(i);
                         lStaffeur = new Staffeur(lJSONObjet.getString(getString(R.string.nom)),
+                                lJSONObjet.getInt(getString(R.string.id)),
                                 lJSONObjet.getString(getString(R.string.presence)),
                                 lJSONObjet.getInt(getString(R.string.conducteur)),
                                 lJSONObjet.getInt(getString(R.string.jaune)),

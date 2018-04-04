@@ -4,6 +4,7 @@ package com.assistanceinformatiquetoulouse.roulezrose.staff;
 public class Staffeur {
     // Attributs privés
     private String pNom;
+    private int pId;
     private String pPresence;
     private String pStat;
     private int pConducteur;
@@ -17,6 +18,7 @@ public class Staffeur {
     public Staffeur()
     {
         this.pNom = "";
+        this.pId = 0;
         this.pPresence = "";
         this.pStat = "";
         this.pConducteur = 0;
@@ -28,10 +30,11 @@ public class Staffeur {
     }
 
     // Constructeur
-    public Staffeur(String nom, String presence, int conducteur, int jaune, int eclaireur, int meneur, int lanterne, int present)
+    public Staffeur(String nom, int id, String presence, int conducteur, int jaune, int eclaireur, int meneur, int lanterne, int present)
     {
         float pourcentage;
         this.pNom = nom;
+        this.pId = id;
         this.pPresence = presence;
         this.pConducteur = conducteur;
         this.pJaune = jaune;
@@ -58,6 +61,11 @@ public class Staffeur {
     public String lireNom()
     {
         return(this.pNom);
+    }
+
+    // Methode lireId
+    public int lireId() {
+        return(this.pId);
     }
 
     // Méthode lirePresence

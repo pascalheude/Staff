@@ -13,12 +13,16 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 // Class ItemDetailFragment
 public class ItemDetailFragment extends Fragment {
     // Attibuts publics
     // Attributs privés
     protected ProgressDialog pProgressDialog;
-    private int pId;
+    private int pRandonneeId;
+    private int pStaffeurId;
     private Staffeur pStaffeur;
     private TextView pTextViewPresence;
     private CheckBox pCheckBoxPresent;
@@ -42,6 +46,12 @@ public class ItemDetailFragment extends Fragment {
     private Button pButtonUpdate;
     private Context pContext;
 
+    // Méthode ecrirePresences
+    private void ecrirePresences(URL url)
+    {
+
+    }
+
     // Constructeur
     public ItemDetailFragment() {
     }
@@ -52,8 +62,10 @@ public class ItemDetailFragment extends Fragment {
 
         if (getArguments().containsKey(getString(R.string.randonnee)))
         {
-            pId = getArguments().getInt("Rando_id");
+            pRandonneeId = getArguments().getInt("Rando_id");
+            pStaffeurId = getArguments().getInt(getString(R.string.id));
             pStaffeur = new Staffeur(getArguments().getString(getString(R.string.nom)),
+                                     pStaffeurId,
                                      getArguments().getString(getString(R.string.presence)),
                                      getArguments().getInt(getString(R.string.conducteur)),
                                      getArguments().getInt(getString(R.string.jaune)),
@@ -69,7 +81,7 @@ public class ItemDetailFragment extends Fragment {
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null)
             {
-                appBarLayout.setTitle(pStaffeur.lireNom());
+                appBarLayout.setTitle(pStaffeur.lireNom() + " (" + Integer.toString(pStaffeurId)+ ")");
             }
             else
             {
@@ -122,12 +134,14 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxMeneur.setChecked(false);
                     pTextViewLanterne1.setText("");
                     pCheckBoxLanterne.setChecked(false);
+                    pButtonUpdate.setEnabled(true);
                 }
                 else
                 {
                     pTextViewConducteur1.setText("");
                     pTextViewPresent1.setText("");
                     pCheckBoxPresent.setChecked(false);
+                    pButtonUpdate.setEnabled(false);
                 }
             }
         });
@@ -147,12 +161,14 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxMeneur.setChecked(false);
                     pTextViewLanterne1.setText("");
                     pCheckBoxLanterne.setChecked(false);
+                    pButtonUpdate.setEnabled(true);
                 }
                 else
                 {
                     pTextViewJaune1.setText("");
                     pTextViewPresent1.setText("");
                     pCheckBoxPresent.setChecked(false);
+                    pButtonUpdate.setEnabled(false);
                 }
             }
         });
@@ -172,12 +188,14 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxMeneur.setChecked(false);
                     pTextViewLanterne1.setText("");
                     pCheckBoxLanterne.setChecked(false);
+                    pButtonUpdate.setEnabled(true);
                 }
                 else
                 {
                     pTextViewEclaireur1.setText("");
                     pTextViewPresent1.setText("");
                     pCheckBoxPresent.setChecked(false);
+                    pButtonUpdate.setEnabled(false);
                 }
             }
         });
@@ -197,12 +215,14 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxEclaireur.setChecked(false);
                     pTextViewLanterne1.setText("");
                     pCheckBoxLanterne.setChecked(false);
+                    pButtonUpdate.setEnabled(true);
                 }
                 else
                 {
                     pTextViewMeneur1.setText("");
                     pTextViewPresent1.setText("");
                     pCheckBoxPresent.setChecked(false);
+                    pButtonUpdate.setEnabled(false);
                 }
             }
         });
@@ -222,12 +242,14 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxEclaireur.setChecked(false);
                     pTextViewMeneur1.setText("");
                     pCheckBoxMeneur.setChecked(false);
+                    pButtonUpdate.setEnabled(true);
                 }
                 else
                 {
                     pTextViewLanterne1.setText("");
                     pTextViewPresent1.setText("");
                     pCheckBoxPresent.setChecked(false);
+                    pButtonUpdate.setEnabled(false);
                 }
             }
         });
@@ -237,18 +259,39 @@ public class ItemDetailFragment extends Fragment {
                 pProgressDialog = ProgressDialog.show(pContext, "Patience",
                         "Mise à jour de la base de données sur le serveur", true);
 
-                new Thread((new Runnable() {
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        // TODO : ajouter la mise à jour de la base de données à la place du sleep
+                        int poste_id;
+                        if (pTextViewConducteur1.getText().equals("+1"))
+                        {
+                            poste_id = 4;
+                        }
+                        else if (pTextViewJaune1.getText().equals("+1"))
+                        {
+                            poste_id = 0;
+                        }
+                        else if (pTextViewEclaireur1.getText().equals("+1"))
+                        {
+                            poste_id = 1;
+                        }
+                        else if (pTextViewMeneur1.getText().equals("+1"))
+                        {
+                            poste_id = 2;
+                        }
+                        else // if (pTextViewLanterne1.getText().equals("+1"))
+                        {
+                            poste_id = 3;
+                        }
                         try {
-                            Thread.sleep(3000);
+                            URL lURL = new URL(String.format(getString(R.string.out_URL), pRandonneeId, pStaffeurId, poste_id));
+                            ecrirePresences(lURL);
                             pProgressDialog.dismiss();
                         }
-                        catch (InterruptedException e) {
+                        catch (MalformedURLException e) {
                         }
                     }
-                })).start();
+                }).start();
             }
         });
         // Show the dummy date as text in a TextView.
