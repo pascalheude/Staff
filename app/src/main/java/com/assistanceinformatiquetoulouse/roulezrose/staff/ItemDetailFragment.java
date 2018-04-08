@@ -41,6 +41,9 @@ public class ItemDetailFragment extends Fragment {
     private TextView pTextViewLanterne;
     private TextView pTextViewLanterne1;
     private CheckBox pCheckBoxLanterne;
+    private TextView pTextViewBinome;
+    private TextView pTextViewBinome1;
+    private CheckBox pCheckBoxBinome;
     private TextView pTextViewPresent;
     private TextView pTextViewPresent1;
     private Button pButtonUpdate;
@@ -72,6 +75,7 @@ public class ItemDetailFragment extends Fragment {
                                      getArguments().getInt(getString(R.string.eclaireur)),
                                      getArguments().getInt(getString(R.string.meneur)),
                                      getArguments().getInt(getString(R.string.lanterne)),
+                                     getArguments().getInt(getString(R.string.binome)),
                                      getArguments().getInt(getString(R.string.present)));
             // Load the dummy date specified by the fragment
             // arguments. In a real-world scenario, use a Loader
@@ -114,6 +118,9 @@ public class ItemDetailFragment extends Fragment {
         pTextViewLanterne = (TextView) rootView.findViewById(R.id.textViewLanterne);
         pTextViewLanterne1 = (TextView) rootView.findViewById(R.id.textViewLanterne1);
         pCheckBoxLanterne = (CheckBox) rootView.findViewById(R.id.checkBoxLanterne);
+        pTextViewBinome = (TextView) rootView.findViewById(R.id.textViewBinome);
+        pTextViewBinome1 = (TextView) rootView.findViewById(R.id.textViewBinome1);
+        pCheckBoxBinome = (CheckBox) rootView.findViewById(R.id.checkBoxBinome);
         pTextViewPresent = (TextView) rootView.findViewById(R.id.textViewPresent);
         pTextViewPresent1 = (TextView) rootView.findViewById(R.id.textViewPresent1);
         pButtonUpdate = (Button) rootView.findViewById(R.id.buttonUpdate);
@@ -134,6 +141,8 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxMeneur.setChecked(false);
                     pTextViewLanterne1.setText("");
                     pCheckBoxLanterne.setChecked(false);
+                    pTextViewBinome1.setText("");
+                    pCheckBoxBinome.setChecked(false);
                     pButtonUpdate.setEnabled(true);
                 }
                 else
@@ -161,6 +170,8 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxMeneur.setChecked(false);
                     pTextViewLanterne1.setText("");
                     pCheckBoxLanterne.setChecked(false);
+                    pTextViewBinome1.setText("");
+                    pCheckBoxBinome.setChecked(false);
                     pButtonUpdate.setEnabled(true);
                 }
                 else
@@ -188,6 +199,8 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxMeneur.setChecked(false);
                     pTextViewLanterne1.setText("");
                     pCheckBoxLanterne.setChecked(false);
+                    pTextViewBinome1.setText("");
+                    pCheckBoxBinome.setChecked(false);
                     pButtonUpdate.setEnabled(true);
                 }
                 else
@@ -215,6 +228,8 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxEclaireur.setChecked(false);
                     pTextViewLanterne1.setText("");
                     pCheckBoxLanterne.setChecked(false);
+                    pTextViewBinome1.setText("");
+                    pCheckBoxBinome.setChecked(false);
                     pButtonUpdate.setEnabled(true);
                 }
                 else
@@ -242,11 +257,42 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxEclaireur.setChecked(false);
                     pTextViewMeneur1.setText("");
                     pCheckBoxMeneur.setChecked(false);
+                    pTextViewBinome1.setText("");
+                    pCheckBoxBinome.setChecked(false);
                     pButtonUpdate.setEnabled(true);
                 }
                 else
                 {
                     pTextViewLanterne1.setText("");
+                    pTextViewPresent1.setText("");
+                    pCheckBoxPresent.setChecked(false);
+                    pButtonUpdate.setEnabled(false);
+                }
+            }
+        });
+        pCheckBoxBinome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (pCheckBoxBinome.isChecked())
+                {
+                    pTextViewBinome1.setText("+1");
+                    pTextViewPresent1.setText("+1");
+                    pCheckBoxPresent.setChecked(true);
+                    pTextViewConducteur1.setText("");
+                    pCheckBoxConducteur.setChecked(false);
+                    pTextViewJaune1.setText("");
+                    pCheckBoxJaune.setChecked(false);
+                    pTextViewEclaireur1.setText("");
+                    pCheckBoxEclaireur.setChecked(false);
+                    pTextViewMeneur1.setText("");
+                    pCheckBoxMeneur.setChecked(false);
+                    pTextViewLanterne1.setText("");
+                    pCheckBoxLanterne.setChecked(false);
+                    pButtonUpdate.setEnabled(true);
+                }
+                else
+                {
+                    pTextViewBinome1.setText("");
                     pTextViewPresent1.setText("");
                     pCheckBoxPresent.setChecked(false);
                     pButtonUpdate.setEnabled(false);
@@ -279,9 +325,13 @@ public class ItemDetailFragment extends Fragment {
                         {
                             poste_id = 2;
                         }
-                        else // if (pTextViewLanterne1.getText().equals("+1"))
+                        else if (pTextViewLanterne1.getText().equals("+1"))
                         {
                             poste_id = 3;
+                        }
+                        else // if (pTextViewBinome1.getText().equals("+1"))
+                        {
+                            poste_id = 6;
                         }
                         try {
                             URL lURL = new URL(String.format(getString(R.string.out_URL), pRandonneeId, pStaffeurId, poste_id));
@@ -304,6 +354,7 @@ public class ItemDetailFragment extends Fragment {
             pTextViewEclaireur.setText(String.valueOf(pStaffeur.lireEclaireur()));
             pTextViewMeneur.setText(String.valueOf(pStaffeur.lireMeneur()));
             pTextViewLanterne.setText(String.valueOf(pStaffeur.lireLanterne()));
+            pTextViewBinome.setText(String.valueOf(pStaffeur.lireBinome()));
             pTextViewPresent.setText(String.valueOf(pStaffeur.lirePresent()));
         }
         else

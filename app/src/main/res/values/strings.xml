@@ -17,5 +17,6 @@
     <string name="eclaireur">E</string>
     <string name="meneur">M</string>
     <string name="lanterne">L</string>
+    <string name="binome">B</string>
     <string name="present">P</string>
 </resources>

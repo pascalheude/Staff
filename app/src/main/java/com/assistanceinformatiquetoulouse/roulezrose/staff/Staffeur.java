@@ -12,6 +12,7 @@ public class Staffeur {
     private int pEclaireur;
     private int pMeneur;
     private int pLanterne;
+    private int pBinome;
     private int pPresent;
 
     // Constructeur
@@ -26,11 +27,21 @@ public class Staffeur {
         this.pEclaireur = 0;
         this.pMeneur = 0;
         this.pLanterne = 0;
+        this.pBinome = 0;
         this.pPresent = 0;
     }
 
     // Constructeur
-    public Staffeur(String nom, int id, String presence, int conducteur, int jaune, int eclaireur, int meneur, int lanterne, int present)
+    public Staffeur(String nom,
+                    int id,
+                    String presence,
+                    int conducteur,
+                    int jaune,
+                    int eclaireur,
+                    int meneur,
+                    int lanterne,
+                    int binome,
+                    int present)
     {
         float pourcentage;
         this.pNom = nom;
@@ -41,6 +52,7 @@ public class Staffeur {
         this.pEclaireur = eclaireur;
         this.pMeneur = meneur;
         this.pLanterne = lanterne;
+        this.pBinome = binome;
         this.pPresent = present;
         if ((conducteur != 0) && (present != 0)) {
             pourcentage = (float) 100.0 * (float) conducteur / (float) present;
@@ -103,6 +115,11 @@ public class Staffeur {
     // Méthode lireLanterne
     public int lireLanterne() {
         return(this.pLanterne);
+    }
+
+    // Méthode lireBinome
+    public int lireBinome() {
+        return(this.pBinome);
     }
 
     // Méthode lirePrésent

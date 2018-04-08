@@ -67,6 +67,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             arguments.putInt(getString(R.string.meneur), getIntent().getIntExtra(getString(R.string.meneur), 0));
             arguments.putInt(getString(R.string.lanterne), getIntent().getIntExtra(getString(R.string.lanterne), 0));
             arguments.putInt(getString(R.string.present), getIntent().getIntExtra(getString(R.string.present), 0));
+            arguments.putInt(getString(R.string.binome), getIntent().getIntExtra(getString(R.string.binome), 0));
             ItemDetailFragment fragment = new ItemDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

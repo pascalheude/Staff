@@ -191,6 +191,7 @@ public class ItemListActivity extends AppCompatActivity {
                         intent.putExtra(getString(R.string.eclaireur), holder.aStaffeur.lireEclaireur());
                         intent.putExtra(getString(R.string.meneur), holder.aStaffeur.lireMeneur());
                         intent.putExtra(getString(R.string.lanterne), holder.aStaffeur.lireLanterne());
+                        intent.putExtra(getString(R.string.binome), holder.aStaffeur.lireBinome());
                         intent.putExtra(getString(R.string.present), holder.aStaffeur.lirePresent());
                         context.startActivity(intent);
                     }
@@ -321,6 +322,7 @@ public class ItemListActivity extends AppCompatActivity {
                                 lJSONObjet.getInt(getString(R.string.eclaireur)),
                                 lJSONObjet.getInt(getString(R.string.meneur)),
                                 lJSONObjet.getInt(getString(R.string.lanterne)),
+                                lJSONObjet.getInt((getString(R.string.binome))),
                                 lJSONObjet.getInt(getString(R.string.present)));
                         pListeStaffeur1.add(lStaffeur);
                     }
@@ -336,6 +338,7 @@ public class ItemListActivity extends AppCompatActivity {
                                 lJSONObjet.getInt(getString(R.string.eclaireur)),
                                 lJSONObjet.getInt(getString(R.string.meneur)),
                                 lJSONObjet.getInt(getString(R.string.lanterne)),
+                                lJSONObjet.getInt(getString(R.string.binome)),
                                 lJSONObjet.getInt(getString(R.string.present)));
                         pListeStaffeur2.add(lStaffeur);
                     }
