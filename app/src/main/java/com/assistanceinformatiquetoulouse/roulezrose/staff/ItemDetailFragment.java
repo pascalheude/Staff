@@ -16,6 +16,8 @@ import android.widget.TextView;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static java.lang.Thread.sleep;
+
 // Class ItemDetailFragment
 public class ItemDetailFragment extends Fragment {
     // Attibuts publics
@@ -52,7 +54,11 @@ public class ItemDetailFragment extends Fragment {
     // Méthode ecrirePresences
     private void ecrirePresences(URL url)
     {
-
+        try {
+            sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     // Constructeur
@@ -335,6 +341,7 @@ public class ItemDetailFragment extends Fragment {
                         }
                         try {
                             URL lURL = new URL(String.format(getString(R.string.out_URL), pRandonneeId, pStaffeurId, poste_id));
+                            pProgressDialog.setMessage(String.format("update.php?rando_id=%d&user_id=%d&poste_id=%d", pRandonneeId, pStaffeurId, poste_id));
                             ecrirePresences(lURL);
                             pProgressDialog.dismiss();
                         }
