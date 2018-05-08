@@ -13,8 +13,15 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import static java.lang.Thread.sleep;
 
@@ -52,13 +59,49 @@ public class ItemDetailFragment extends Fragment {
     private Context pContext;
 
     // Méthode ecrirePresences
-    private void ecrirePresences(URL url)
-    {
+    private String ecrirePresences(URL url) throws IOException {
+        String lStatus = "";
+        InputStream lInputStream = null;
         try {
-            sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            if (url.getProtocol().contains("https")) {
+                // Creer une communication https pour communiquer avec l'URL
+                HttpsURLConnection lHttpsURLConnection = (HttpsURLConnection) url.openConnection();
+                // Connexion à l'URL
+                lHttpsURLConnection.connect();
+                // Lire le flux depuis la connexion
+                lInputStream = lHttpsURLConnection.getInputStream();
+            }
+            else
+            {
+                // Creer une communication http pour communiquer avec l'URL
+                HttpURLConnection lHttpURLConnection = (HttpURLConnection) url.openConnection();
+                // Connexion à l'URL
+                lHttpURLConnection.connect();
+                // Lire le flux depuis la connexion
+                lInputStream = lHttpURLConnection.getInputStream();
+            }
+            BufferedReader lBufferedReader = new BufferedReader(new InputStreamReader(lInputStream));
+            StringBuffer lStringBuffer  = new StringBuffer();
+            String lLigne = "";
+            while((lLigne = lBufferedReader.readLine()) != null) {
+                lStringBuffer.append(lLigne);
+                lStringBuffer.append("\n");
+            }
+            lStatus = lStringBuffer.toString();
+            lBufferedReader.close();
         }
+        catch (IOException e) {
+        }
+        finally {
+            if (lInputStream != null)
+            {
+                lInputStream.close();
+            }
+            else
+            {
+            }
+        }
+        return(lStatus);
     }
 
     // Constructeur
@@ -342,10 +385,25 @@ public class ItemDetailFragment extends Fragment {
                         try {
                             URL lURL = new URL(String.format(getString(R.string.out_URL), pRandonneeId, pStaffeurId, poste_id));
                             pProgressDialog.setMessage(String.format("update.php?rando_id=%d&user_id=%d&poste_id=%d", pRandonneeId, pStaffeurId, poste_id));
-                            ecrirePresences(lURL);
+                            if (ecrirePresences(lURL).equals("OK"))
+                            {
+                                sleep(1000);
+                                pProgressDialog.setMessage("Présence mise à jour");
+                                sleep(1000);
+                            }
+                            else
+                            {
+                                sleep(1000);
+                                pProgressDialog.setMessage("Problème mise à jour présence");
+                                sleep(1000);
+                            }
                             pProgressDialog.dismiss();
                         }
+                        catch (InterruptedException e) {
+                        }
                         catch (MalformedURLException e) {
+                        }
+                        catch (IOException e) {
                         }
                     }
                 }).start();

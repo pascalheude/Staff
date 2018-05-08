@@ -53,8 +53,9 @@ public class Staffeur {
         this.pMeneur = meneur;
         this.pLanterne = lanterne;
         this.pBinome = binome;
+        present = conducteur + jaune + eclaireur + meneur + lanterne + binome;
         this.pPresent = present;
-        if ((conducteur != 0) && (present != 0)) {
+        if (present != 0) {
             pourcentage = (float) 100.0 * (float) conducteur / (float) present;
             this.pStat = String.valueOf(conducteur) +
                          " / " +

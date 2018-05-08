@@ -119,7 +119,7 @@ public class ItemListActivity extends AppCompatActivity {
             case R.id.action_about:
                 AlertDialog.Builder lAlertDialog = new AlertDialog.Builder(this);
                 lAlertDialog.setTitle("Staff\nVersion " + this.getString(R.string.version));
-                lAlertDialog.setMessage("Gestion de la présence des staffeurs\n© AIT 2018 (pascalh)\n\nassistanceinformatiquetoulouse@gmail.com");
+                lAlertDialog.setMessage("Compatible index version " + this.getString(R.string.index) + " et update version " + this.getString(R.string.update) + "\nGestion de la présence des staffeurs\n© AIT 2018 (pascalh)\n\nassistanceinformatiquetoulouse@gmail.com");
                 lAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                     }});
