@@ -3,6 +3,10 @@ package com.assistanceinformatiquetoulouse.roulezrose.staff;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -47,17 +51,35 @@ public class ItemListActivity extends AppCompatActivity {
     private boolean mTwoPane;
     private View pRecyclerView;
     private TextView pTextViewDate;
-    private FloatingActionButton pFloatingActionButton;
+    private FloatingActionButton pFloatingActionButtonRandonne;
+    private FloatingActionButton pFloatingActionPresent;
     private SimpleItemRecyclerViewAdapter pSimpleItemRecyclerViewAdapter1;
     private SimpleItemRecyclerViewAdapter pSimpleItemRecyclerViewAdapter2;
     private boolean pPremiereRandonnee;
     private String pURL;
     private int pId1;
     private int pId2;
+    private int pStaffPresent1;
+    private int pStaffPresent2;
     private String pDate1String;
     private String pDate2String;
     private ArrayList<Staffeur> pListeStaffeur1;
     private ArrayList<Staffeur> pListeStaffeur2;
+
+    public static Bitmap textAsBitmap(String text, float textSize, int textColor) {
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setTextSize(textSize);
+        paint.setColor(textColor);
+        paint.setTextAlign(Paint.Align.LEFT);
+        float baseline = -paint.ascent(); // ascent() is negative
+        int width = (int) (paint.measureText(text) + 0.0f); // round
+        int height = (int) (baseline + paint.descent() + 0.0f);
+        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(image);
+        canvas.drawText(text, 0, baseline, paint);
+        return(image);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +88,8 @@ public class ItemListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_item_list);
         pRecyclerView = findViewById(R.id.item_list);
         pTextViewDate = (TextView) findViewById(R.id.dateRandonnee);
-        pFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        pFloatingActionButtonRandonne = (FloatingActionButton) findViewById(R.id.fabRandonnee);
+        pFloatingActionPresent = (FloatingActionButton) findViewById(R.id.fabPresent);
         pPremiereRandonnee = true;
         pURL = getString(R.string.in_URL);
         pListeStaffeur1 = new ArrayList<>();
@@ -76,19 +99,21 @@ public class ItemListActivity extends AppCompatActivity {
         DownloadTask downloadTask = new DownloadTask();
         downloadTask.execute(pURL);
 
-        pFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+        pFloatingActionButtonRandonne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (pPremiereRandonnee) {
-                    pFloatingActionButton.setImageResource(R.drawable.ic_fleche_gauche_rouge);
+                    pFloatingActionButtonRandonne.setImageResource(R.drawable.ic_fleche_gauche_rouge);
                     pTextViewDate.setText(pDate2String);
                     ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter2);
+                    pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent2), 16, Color.WHITE));
                     pPremiereRandonnee = false;
                 }
                 else {
-                    pFloatingActionButton.setImageResource(R.drawable.ic_fleche_droite_rouge);
+                    pFloatingActionButtonRandonne.setImageResource(R.drawable.ic_fleche_droite_rouge);
                     pTextViewDate.setText(pDate1String);
                     ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter1);
+                    pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent1), 16, Color.WHITE));
                     pPremiereRandonnee = true;
                 }
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -123,8 +148,7 @@ public class ItemListActivity extends AppCompatActivity {
                 lAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                     }});
-                // TODO : changer l'image et utiliser l'icone de l'application
-                lAlertDialog.setIcon(R.drawable.ic_roulezrose);
+                lAlertDialog.setIcon(R.mipmap.ic_staff);
                 lAlertDialog.create().show();
                 break;
         }
@@ -310,6 +334,8 @@ public class ItemListActivity extends AppCompatActivity {
                     }
                     pId1 = lGlobalJSONObject.getInt("Id1");
                     pId2 = lGlobalJSONObject.getInt("Id2");
+                    pStaffPresent1 = 0;
+                    pStaffPresent2 = 0;
                     lListe_staffeur = lGlobalJSONObject.getJSONArray("Staffeurs1");
                     for (int i = 0; i < lListe_staffeur.length(); i++) {
                         Staffeur lStaffeur;
@@ -324,6 +350,13 @@ public class ItemListActivity extends AppCompatActivity {
                                 lJSONObjet.getInt(getString(R.string.lanterne)),
                                 lJSONObjet.getInt((getString(R.string.binome))),
                                 lJSONObjet.getInt(getString(R.string.present)));
+                        if (lStaffeur.lirePresence().equals(getString(R.string.staff_present)))
+                        {
+                            pStaffPresent1++;
+                        }
+                        else
+                        {
+                        }
                         pListeStaffeur1.add(lStaffeur);
                     }
                     lListe_staffeur = lGlobalJSONObject.getJSONArray("Staffeurs2");
@@ -340,6 +373,13 @@ public class ItemListActivity extends AppCompatActivity {
                                 lJSONObjet.getInt(getString(R.string.lanterne)),
                                 lJSONObjet.getInt(getString(R.string.binome)),
                                 lJSONObjet.getInt(getString(R.string.present)));
+                        if (lStaffeur.lirePresence().equals(getString(R.string.staff_present)))
+                        {
+                            pStaffPresent2++;
+                        }
+                        else
+                        {
+                        }
                         pListeStaffeur2.add(lStaffeur);
                     }
                 }
@@ -371,6 +411,7 @@ public class ItemListActivity extends AppCompatActivity {
             pSimpleItemRecyclerViewAdapter1 = new SimpleItemRecyclerViewAdapter(pListeStaffeur1);
             pSimpleItemRecyclerViewAdapter2 = new SimpleItemRecyclerViewAdapter(pListeStaffeur2);
             ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter1);
+            pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent1), 16, Color.WHITE));
         }
     }
 }

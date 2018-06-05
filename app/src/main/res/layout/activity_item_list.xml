@@ -27,12 +27,20 @@
     </FrameLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fabRandonnee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_fleche_droite_rouge"
+        app:backgroundTint="@color/colorLightGrey"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabPresent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@color/colorLightGrey"/>
 
 </android.support.design.widget.CoordinatorLayout>
