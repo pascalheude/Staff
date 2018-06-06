@@ -55,16 +55,16 @@ public class ItemListActivity extends AppCompatActivity {
     private FloatingActionButton pFloatingActionPresent;
     private SimpleItemRecyclerViewAdapter pSimpleItemRecyclerViewAdapter1;
     private SimpleItemRecyclerViewAdapter pSimpleItemRecyclerViewAdapter2;
-    private boolean pPremiereRandonnee;
-    private String pURL;
-    private int pId1;
-    private int pId2;
-    private int pStaffPresent1;
-    private int pStaffPresent2;
-    private String pDate1String;
-    private String pDate2String;
-    private ArrayList<Staffeur> pListeStaffeur1;
-    private ArrayList<Staffeur> pListeStaffeur2;
+    private boolean pPremiereRandonnee; // TRUE si la randonnée n°1 est affichée
+    private String pURL;    // URL pour lire le fichier json à partir de la base de données
+    private int pId1;   // ID de la randonnée n°1 (rando_id)
+    private int pId2;   // ID de la randonnée n°2 (rando_id)
+    private int pStaffPresent1; // nombre de staffeurs présents à la randonnée n°1
+    private int pStaffPresent2; // nombre de staffeurs présents à la randonnée n°2
+    private String pDate1String;    // date de la randonnée n°1
+    private String pDate2String;    // date de la randonnée n°2
+    private ArrayList<Staffeur> pListeStaffeur1;    // liste des staffeurs de la randonnée n°1
+    private ArrayList<Staffeur> pListeStaffeur2;    // liste des staffeurs de la randonnée n°2
 
     public static Bitmap textAsBitmap(String text, float textSize, int textColor) {
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);

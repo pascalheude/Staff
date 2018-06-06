@@ -104,6 +104,19 @@ public class ItemDetailFragment extends Fragment {
         return(lStatus);
     }
 
+    // Méthode inverserBouton
+    private void inverserBouton()
+    {
+        if (pButtonUpdate.isEnabled())
+        {
+            pButtonUpdate.setEnabled(false);
+        }
+        else
+        {
+            pButtonUpdate.setEnabled(true);
+        }
+    }
+
     // Constructeur
     public ItemDetailFragment() {
     }
@@ -174,6 +187,12 @@ public class ItemDetailFragment extends Fragment {
         pTextViewPresent1 = (TextView) rootView.findViewById(R.id.textViewPresent1);
         pButtonUpdate = (Button) rootView.findViewById(R.id.buttonUpdate);
 
+        pCheckBoxPresent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inverserBouton();
+            }
+        });
         pCheckBoxConducteur.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -181,7 +200,6 @@ public class ItemDetailFragment extends Fragment {
                 {
                     pTextViewConducteur1.setText("+1");
                     pTextViewPresent1.setText("+1");
-                    pCheckBoxPresent.setChecked(true);
                     pTextViewJaune1.setText("");
                     pCheckBoxJaune.setChecked(false);
                     pTextViewEclaireur1.setText("");
@@ -192,15 +210,13 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxLanterne.setChecked(false);
                     pTextViewBinome1.setText("");
                     pCheckBoxBinome.setChecked(false);
-                    pButtonUpdate.setEnabled(true);
                 }
                 else
                 {
                     pTextViewConducteur1.setText("");
                     pTextViewPresent1.setText("");
-                    pCheckBoxPresent.setChecked(false);
-                    pButtonUpdate.setEnabled(false);
                 }
+                inverserBouton();
             }
         });
         pCheckBoxJaune.setOnClickListener(new View.OnClickListener() {
@@ -210,7 +226,6 @@ public class ItemDetailFragment extends Fragment {
                 {
                     pTextViewJaune1.setText("+1");
                     pTextViewPresent1.setText("+1");
-                    pCheckBoxPresent.setChecked(true);
                     pTextViewConducteur1.setText("");
                     pCheckBoxConducteur.setChecked(false);
                     pTextViewEclaireur1.setText("");
@@ -221,15 +236,13 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxLanterne.setChecked(false);
                     pTextViewBinome1.setText("");
                     pCheckBoxBinome.setChecked(false);
-                    pButtonUpdate.setEnabled(true);
                 }
                 else
                 {
                     pTextViewJaune1.setText("");
                     pTextViewPresent1.setText("");
-                    pCheckBoxPresent.setChecked(false);
-                    pButtonUpdate.setEnabled(false);
                 }
+                inverserBouton();
             }
         });
         pCheckBoxEclaireur.setOnClickListener(new View.OnClickListener() {
@@ -239,7 +252,6 @@ public class ItemDetailFragment extends Fragment {
                 {
                     pTextViewEclaireur1.setText("+1");
                     pTextViewPresent1.setText("+1");
-                    pCheckBoxPresent.setChecked(true);
                     pTextViewConducteur1.setText("");
                     pCheckBoxConducteur.setChecked(false);
                     pTextViewJaune1.setText("");
@@ -250,15 +262,13 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxLanterne.setChecked(false);
                     pTextViewBinome1.setText("");
                     pCheckBoxBinome.setChecked(false);
-                    pButtonUpdate.setEnabled(true);
                 }
                 else
                 {
                     pTextViewEclaireur1.setText("");
                     pTextViewPresent1.setText("");
-                    pCheckBoxPresent.setChecked(false);
-                    pButtonUpdate.setEnabled(false);
                 }
+                inverserBouton();
             }
         });
         pCheckBoxMeneur.setOnClickListener(new View.OnClickListener() {
@@ -268,7 +278,6 @@ public class ItemDetailFragment extends Fragment {
                 {
                     pTextViewMeneur1.setText("+1");
                     pTextViewPresent1.setText("+1");
-                    pCheckBoxPresent.setChecked(true);
                     pTextViewConducteur1.setText("");
                     pCheckBoxConducteur.setChecked(false);
                     pTextViewJaune1.setText("");
@@ -279,15 +288,13 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxLanterne.setChecked(false);
                     pTextViewBinome1.setText("");
                     pCheckBoxBinome.setChecked(false);
-                    pButtonUpdate.setEnabled(true);
                 }
                 else
                 {
                     pTextViewMeneur1.setText("");
                     pTextViewPresent1.setText("");
-                    pCheckBoxPresent.setChecked(false);
-                    pButtonUpdate.setEnabled(false);
                 }
+                inverserBouton();
             }
         });
         pCheckBoxLanterne.setOnClickListener(new View.OnClickListener() {
@@ -297,7 +304,6 @@ public class ItemDetailFragment extends Fragment {
                 {
                     pTextViewLanterne1.setText("+1");
                     pTextViewPresent1.setText("+1");
-                    pCheckBoxPresent.setChecked(true);
                     pTextViewConducteur1.setText("");
                     pCheckBoxConducteur.setChecked(false);
                     pTextViewJaune1.setText("");
@@ -308,15 +314,13 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxMeneur.setChecked(false);
                     pTextViewBinome1.setText("");
                     pCheckBoxBinome.setChecked(false);
-                    pButtonUpdate.setEnabled(true);
                 }
                 else
                 {
                     pTextViewLanterne1.setText("");
                     pTextViewPresent1.setText("");
-                    pCheckBoxPresent.setChecked(false);
-                    pButtonUpdate.setEnabled(false);
                 }
+                inverserBouton();
             }
         });
         pCheckBoxBinome.setOnClickListener(new View.OnClickListener() {
@@ -326,7 +330,6 @@ public class ItemDetailFragment extends Fragment {
                 {
                     pTextViewBinome1.setText("+1");
                     pTextViewPresent1.setText("+1");
-                    pCheckBoxPresent.setChecked(true);
                     pTextViewConducteur1.setText("");
                     pCheckBoxConducteur.setChecked(false);
                     pTextViewJaune1.setText("");
@@ -337,15 +340,13 @@ public class ItemDetailFragment extends Fragment {
                     pCheckBoxMeneur.setChecked(false);
                     pTextViewLanterne1.setText("");
                     pCheckBoxLanterne.setChecked(false);
-                    pButtonUpdate.setEnabled(true);
                 }
                 else
                 {
                     pTextViewBinome1.setText("");
                     pTextViewPresent1.setText("");
-                    pCheckBoxPresent.setChecked(false);
-                    pButtonUpdate.setEnabled(false);
                 }
+                inverserBouton();
             }
         });
         pButtonUpdate.setOnClickListener(new View.OnClickListener() {
@@ -357,7 +358,17 @@ public class ItemDetailFragment extends Fragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        int valeur;
                         int poste_id;
+
+                        if (pCheckBoxPresent.isChecked())
+                        {
+                            valeur = 1;
+                        }
+                        else
+                        {
+                            valeur = 0;
+                        }
                         if (pTextViewConducteur1.getText().equals("+1"))
                         {
                             poste_id = 4;
@@ -384,7 +395,7 @@ public class ItemDetailFragment extends Fragment {
                         }
                         try {
                             URL lURL = new URL(String.format(getString(R.string.out_URL), pRandonneeId, pStaffeurId, poste_id));
-                            pProgressDialog.setMessage(String.format("update.php?rando_id=%d&user_id=%d&poste_id=%d", pRandonneeId, pStaffeurId, poste_id));
+                            pProgressDialog.setMessage(String.format("update.php?rando_id=%d&user_id=%d&valeur=%d&poste_id=%d", pRandonneeId, pStaffeurId, valeur, poste_id));
                             if (ecrirePresences(lURL).equals("OK"))
                             {
                                 sleep(1000);
@@ -414,6 +425,14 @@ public class ItemDetailFragment extends Fragment {
         {
             //((WebView) rootView.findViewById(R.id.item_detail)).loadData(pStaffeur.lireNom(), "text/html", null);
             pTextViewPresence.setText(pStaffeur.lirePresence());
+            if (pStaffeur.lirePresence().equals(getString(R.string.staff_present)))
+            {
+                pCheckBoxPresent.setChecked(true);
+            }
+            else
+            {
+                pCheckBoxPresent.setChecked(false);
+            }
             pTextViewConducteur.setText(String.valueOf(pStaffeur.lireConducteur()));
             pTextViewJaune.setText(String.valueOf(pStaffeur.lireJaune()));
             pTextViewEclaireur.setText(String.valueOf(pStaffeur.lireEclaireur()));
