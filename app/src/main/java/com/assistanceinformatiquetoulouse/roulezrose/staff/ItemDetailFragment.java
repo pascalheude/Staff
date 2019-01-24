@@ -417,7 +417,7 @@ public class ItemDetailFragment extends Fragment {
                         try {
                             URL lURL = new URL(String.format(getString(R.string.out_URL), pRandonneeId, pStaffeurId, poste_id));
                             pProgressDialog.setMessage(String.format("update.php?rando_id=%d&user_id=%d&valeur=%d&poste_id=%d", pRandonneeId, pStaffeurId, valeur, poste_id));
-                            if (ecrirePresences(lURL).equals("OK"))
+                            if (ecrirePresences(lURL).contains("OK"))
                             {
                                 sleep(1000);
                                 pProgressDialog.setMessage("Présence mise à jour");
