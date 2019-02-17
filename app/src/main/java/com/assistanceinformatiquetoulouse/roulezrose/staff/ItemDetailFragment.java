@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -133,6 +134,7 @@ public class ItemDetailFragment extends Fragment {
             pStaffeur = new Staffeur(getArguments().getString(getString(R.string.nom)),
                                      pStaffeurId,
                                      getArguments().getString(getString(R.string.presence)),
+                                     getArguments().getInt(getString(R.string.poste)),
                                      getArguments().getInt(getString(R.string.conducteur)),
                                      getArguments().getInt(getString(R.string.jaune)),
                                      getArguments().getInt(getString(R.string.eclaireur)),
@@ -163,6 +165,7 @@ public class ItemDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.item_detail, container, false);
+        pProgressDialog = null;
         pBoutonUpdateActif = 0;
         pContext = getContext();
         pTextViewPresence = (TextView) rootView.findViewById(R.id.textViewPresence);
@@ -415,23 +418,22 @@ public class ItemDetailFragment extends Fragment {
                             poste_id = 6;
                         }
                         try {
-                            URL lURL = new URL(String.format(getString(R.string.out_URL), pRandonneeId, pStaffeurId, poste_id));
-                            pProgressDialog.setMessage(String.format("update.php?rando_id=%d&user_id=%d&valeur=%d&poste_id=%d", pRandonneeId, pStaffeurId, valeur, poste_id));
+                            URL lURL = new URL(String.format(getString(R.string.out_URL), pRandonneeId, pStaffeurId, valeur, poste_id));
+                            pProgressDialog.setMessage(String.format("staff_update.php?rando_id=%d&user_id=%d&valeur=%d&poste_id=%d", pRandonneeId, pStaffeurId, valeur, poste_id));
                             if (ecrirePresences(lURL).contains("OK"))
                             {
-                                sleep(1000);
-                                pProgressDialog.setMessage("Présence mise à jour");
-                                sleep(1000);
+                                getActivity().finish();
                             }
                             else
                             {
-                                sleep(1000);
-                                pProgressDialog.setMessage("Problème mise à jour présence");
-                                sleep(1000);
+                                pProgressDialog.dismiss();
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(pContext, "Problème mise à jour présence", Toast.LENGTH_LONG).show();
+                                    }
+                                });
                             }
-                            pProgressDialog.dismiss();
-                        }
-                        catch (InterruptedException e) {
                         }
                         catch (MalformedURLException e) {
                         }
@@ -466,5 +468,16 @@ public class ItemDetailFragment extends Fragment {
         {
         }
         return(rootView);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (pProgressDialog != null) {
+            pProgressDialog.dismiss();
+            pProgressDialog = null;
+        }
+        else {
+        }
     }
 }

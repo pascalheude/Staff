@@ -6,6 +6,7 @@ public class Staffeur {
     private String pNom;
     private int pId;
     private String pPresence;
+    private int pPoste;
     private String pStat;
     private int pConducteur;
     private int pJaune;
@@ -21,6 +22,7 @@ public class Staffeur {
         this.pNom = "";
         this.pId = 0;
         this.pPresence = "";
+        this.pPoste = 0;
         this.pStat = "";
         this.pConducteur = 0;
         this.pJaune = 0;
@@ -35,6 +37,7 @@ public class Staffeur {
     public Staffeur(String nom,
                     int id,
                     String presence,
+                    int poste,
                     int conducteur,
                     int jaune,
                     int eclaireur,
@@ -47,6 +50,7 @@ public class Staffeur {
         this.pNom = nom;
         this.pId = id;
         this.pPresence = presence;
+        this.pPoste = poste;
         this.pConducteur = conducteur;
         this.pJaune = jaune;
         this.pEclaireur = eclaireur;
@@ -126,5 +130,20 @@ public class Staffeur {
     // Méthode lirePrésent
     public int lirePresent () {
         return(this.pPresent);
+    }
+
+    // Méthode isPresent
+    public boolean isPresent() {
+        if (this.pPresence.contains("présent")) {
+            return(true);
+        }
+        else {
+            return(false);
+        }
+    }
+
+    // Méthode lirePoste
+    public int lirePoste() {
+        return(this.pPoste);
     }
 }

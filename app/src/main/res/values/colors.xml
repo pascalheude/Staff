@@ -8,4 +8,8 @@
     <color name="colorRed">#FF0000</color>
     <color name="colorGrey">#404040</color>
     <color name="colorLightGrey">#909090</color>
+    <color name="colorStaffeurJaune">#FDFF4F</color>
+    <color name="colorStaffeurOrange">#FDCC4F</color>
+    <color name="colorStaffeurConducteur">#0F50FF</color>
+    <color name="colorStaffeurBinome">#99FF99</color>
 </resources>

@@ -182,6 +182,30 @@ public class ItemListActivity extends AppCompatActivity {
             holder.aNomView.setText((String) holder.aStaffeur.lireNom());
             holder.aPresenceView.setText((String) holder.aStaffeur.lirePresence());
             holder.aStatView.setText((String) holder.aStaffeur.lireStat());
+            if (holder.aStaffeur.isPresent()) {
+                switch(holder.aStaffeur.lirePoste()) {
+                    case 0 : // jaune
+                        holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurJaune));
+                        break;
+                    case 1 : // éclaireur
+                    case 2 : // meneur
+                    case 3 : // lanterne
+                    case 5 : // électron
+                        holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurOrange));
+                        break;
+                    case 4 : // conducteur
+                        holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurConducteur));
+                        break;
+                    case 6 : // binôme
+                        holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurBinome));
+                        break;
+                    default : // autre (impossible)
+                        holder.aPresenceView.setBackgroundColor(0x00000000);
+                }
+            }
+            else {
+                holder.aPresenceView.setBackgroundColor(0x00000000);
+            }
 
             holder.aView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -210,6 +234,7 @@ public class ItemListActivity extends AppCompatActivity {
                         intent.putExtra(getString(R.string.nom), holder.aStaffeur.lireNom());
                         intent.putExtra(getString(R.string.id), holder.aStaffeur.lireId());
                         intent.putExtra(getString(R.string.presence), holder.aStaffeur.lirePresence());
+                        intent.putExtra(getString(R.string.poste), holder.aStaffeur.lirePoste());
                         intent.putExtra(getString(R.string.conducteur), holder.aStaffeur.lireConducteur());
                         intent.putExtra(getString(R.string.jaune), holder.aStaffeur.lireJaune());
                         intent.putExtra(getString(R.string.eclaireur), holder.aStaffeur.lireEclaireur());
@@ -343,6 +368,7 @@ public class ItemListActivity extends AppCompatActivity {
                         lStaffeur = new Staffeur(lJSONObjet.getString(getString(R.string.nom)),
                                 lJSONObjet.getInt(getString(R.string.id)),
                                 lJSONObjet.getString(getString(R.string.presence)),
+                                lJSONObjet.getInt(getString(R.string.poste)),
                                 lJSONObjet.getInt(getString(R.string.conducteur)),
                                 lJSONObjet.getInt(getString(R.string.jaune)),
                                 lJSONObjet.getInt(getString(R.string.eclaireur)),
@@ -366,6 +392,7 @@ public class ItemListActivity extends AppCompatActivity {
                         lStaffeur = new Staffeur(lJSONObjet.getString(getString(R.string.nom)),
                                 lJSONObjet.getInt(getString(R.string.id)),
                                 lJSONObjet.getString(getString(R.string.presence)),
+                                lJSONObjet.getInt(getString(R.string.poste)),
                                 lJSONObjet.getInt(getString(R.string.conducteur)),
                                 lJSONObjet.getInt(getString(R.string.jaune)),
                                 lJSONObjet.getInt(getString(R.string.eclaireur)),

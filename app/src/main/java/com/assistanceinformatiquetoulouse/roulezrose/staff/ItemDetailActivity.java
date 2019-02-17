@@ -61,6 +61,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             arguments.putString(getString(R.string.nom), getIntent().getStringExtra(getString(R.string.nom)));
             arguments.putInt(getString(R.string.id), getIntent().getIntExtra(getString(R.string.id), 0));
             arguments.putString(getString(R.string.presence), getIntent().getStringExtra(getString(R.string.presence)));
+            arguments.putInt(getString(R.string.poste), getIntent().getIntExtra(getString(R.string.poste), 0));
             arguments.putInt(getString(R.string.conducteur), getIntent().getIntExtra(getString(R.string.conducteur), 0));
             arguments.putInt(getString(R.string.jaune), getIntent().getIntExtra(getString(R.string.jaune), 0));
             arguments.putInt(getString(R.string.eclaireur), getIntent().getIntExtra(getString(R.string.eclaireur), 0));
