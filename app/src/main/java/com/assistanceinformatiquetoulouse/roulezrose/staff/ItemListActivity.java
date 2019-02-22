@@ -180,23 +180,35 @@ public class ItemListActivity extends AppCompatActivity {
         public void onBindViewHolder(final ViewHolder holder, final int position) {
             holder.aStaffeur = pListeStaffeur.get(position);
             holder.aNomView.setText((String) holder.aStaffeur.lireNom());
-            holder.aPresenceView.setText((String) holder.aStaffeur.lirePresence());
             holder.aStatView.setText((String) holder.aStaffeur.lireStat());
             if (holder.aStaffeur.isPresent()) {
                 switch(holder.aStaffeur.lirePoste()) {
                     case 0 : // jaune
+                        holder.aPresenceView.setText("Jaune");
                         holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurJaune));
                         break;
                     case 1 : // éclaireur
+                        holder.aPresenceView.setText("Eclaireur");
+                        holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurOrange));
+                        break;
                     case 2 : // meneur
+                        holder.aPresenceView.setText("Meneur");
+                        holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurOrange));
+                        break;
                     case 3 : // lanterne
-                    case 5 : // électron
+                        holder.aPresenceView.setText("Lanterne");
                         holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurOrange));
                         break;
                     case 4 : // conducteur
+                        holder.aPresenceView.setText("Conducteur");
                         holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurConducteur));
                         break;
+                    case 5 : // électron
+                        holder.aPresenceView.setText("Electron");
+                        holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurOrange));
+                        break;
                     case 6 : // binôme
+                        holder.aPresenceView.setText("Binôme");
                         holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurBinome));
                         break;
                     default : // autre (impossible)
@@ -204,6 +216,7 @@ public class ItemListActivity extends AppCompatActivity {
                 }
             }
             else {
+                holder.aPresenceView.setText((String) holder.aStaffeur.lirePresence());
                 holder.aPresenceView.setBackgroundColor(0x00000000);
             }
 

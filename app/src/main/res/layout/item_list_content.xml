@@ -19,11 +19,11 @@
         </TextView>
         <TextView
             android:id="@+id/presence"
-            android:layout_width="60dp"
+            android:layout_width="80dp"
             android:layout_height="24dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:textSize="16sp"
             android:textColor="@color/colorRed" >
         </TextView>
