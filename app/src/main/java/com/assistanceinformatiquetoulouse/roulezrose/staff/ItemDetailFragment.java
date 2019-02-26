@@ -34,29 +34,23 @@ public class ItemDetailFragment extends Fragment {
     private int pRandonneeId;
     private int pStaffeurId;
     private int pBoutonUpdateActif;
+    private int pBoutonUpdateActifMem;
     private Staffeur pStaffeur;
     private TextView pTextViewPresence;
     private CheckBox pCheckBoxPresent;
     private TextView pTextViewConducteur;
-    private TextView pTextViewConducteur1;
     private CheckBox pCheckBoxConducteur;
     private TextView pTextViewJaune;
-    private TextView pTextViewJaune1;
     private CheckBox pCheckBoxJaune;
-    private TextView pTextViewEclaireur1;
     private TextView pTextViewEclaireur;
     private CheckBox pCheckBoxEclaireur;
     private TextView pTextViewMeneur;
-    private TextView pTextViewMeneur1;
     private CheckBox pCheckBoxMeneur;
     private TextView pTextViewLanterne;
-    private TextView pTextViewLanterne1;
     private CheckBox pCheckBoxLanterne;
     private TextView pTextViewBinome;
-    private TextView pTextViewBinome1;
     private CheckBox pCheckBoxBinome;
     private TextView pTextViewPresent;
-    private TextView pTextViewPresent1;
     private Button pButtonUpdate;
     private Context pContext;
 
@@ -109,7 +103,7 @@ public class ItemDetailFragment extends Fragment {
     // Méthode activerBouton
     private void activerBouton()
     {
-        if (pBoutonUpdateActif == 0)
+        if (pBoutonUpdateActif == pBoutonUpdateActifMem)
         {
             pButtonUpdate.setEnabled(false);
         }
@@ -167,35 +161,40 @@ public class ItemDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.item_detail, container, false);
         pProgressDialog = null;
         pBoutonUpdateActif = 0;
+        pBoutonUpdateActifMem = 0;
         pContext = getContext();
         pTextViewPresence = (TextView) rootView.findViewById(R.id.textViewPresence);
         pCheckBoxPresent = (CheckBox) rootView.findViewById(R.id.checkBoxPresent);
         pTextViewConducteur = (TextView) rootView.findViewById(R.id.textViewConducteur);
-        pTextViewConducteur1 = (TextView) rootView.findViewById(R.id.textViewConducteur1);
         pCheckBoxConducteur = (CheckBox) rootView.findViewById(R.id.checkBoxConducteur);
         pTextViewJaune = (TextView) rootView.findViewById(R.id.textViewJaune);
-        pTextViewJaune1 = (TextView) rootView.findViewById(R.id.textViewJaune1);
         pCheckBoxJaune = (CheckBox) rootView.findViewById(R.id.checkBoxJaune);
         pTextViewEclaireur = (TextView) rootView.findViewById(R.id.textViewEclaireur);
-        pTextViewEclaireur1 = (TextView) rootView.findViewById(R.id.textViewEclaireur1);
         pCheckBoxEclaireur = (CheckBox) rootView.findViewById(R.id.checkBoxEclaireur);
         pTextViewMeneur = (TextView) rootView.findViewById(R.id.textViewMeneur);
-        pTextViewMeneur1 = (TextView) rootView.findViewById(R.id.textViewMeneur1);
         pCheckBoxMeneur = (CheckBox) rootView.findViewById(R.id.checkBoxMeneur);
         pTextViewLanterne = (TextView) rootView.findViewById(R.id.textViewLanterne);
-        pTextViewLanterne1 = (TextView) rootView.findViewById(R.id.textViewLanterne1);
         pCheckBoxLanterne = (CheckBox) rootView.findViewById(R.id.checkBoxLanterne);
         pTextViewBinome = (TextView) rootView.findViewById(R.id.textViewBinome);
-        pTextViewBinome1 = (TextView) rootView.findViewById(R.id.textViewBinome1);
         pCheckBoxBinome = (CheckBox) rootView.findViewById(R.id.checkBoxBinome);
         pTextViewPresent = (TextView) rootView.findViewById(R.id.textViewPresent);
-        pTextViewPresent1 = (TextView) rootView.findViewById(R.id.textViewPresent1);
         pButtonUpdate = (Button) rootView.findViewById(R.id.buttonUpdate);
 
         pCheckBoxPresent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pBoutonUpdateActif ^= 0x1;
+                if (pCheckBoxPresent.isChecked()) {
+                    pBoutonUpdateActif = 0x1;
+                }
+                else {
+                    pBoutonUpdateActif = 0;
+                    pCheckBoxConducteur.setChecked(false);
+                    pCheckBoxJaune.setChecked(false);
+                    pCheckBoxEclaireur.setChecked(false);
+                    pCheckBoxMeneur.setChecked(false);
+                    pCheckBoxLanterne.setChecked(false);
+                    pCheckBoxBinome.setChecked(false);
+                }
                 activerBouton();
             }
         });
@@ -206,24 +205,15 @@ public class ItemDetailFragment extends Fragment {
                 if (pCheckBoxConducteur.isChecked())
                 {
                     pBoutonUpdateActif |= 0x2;
-                    pTextViewConducteur1.setText("+1");
-                    pTextViewPresent1.setText("+1");
-                    pTextViewJaune1.setText("");
                     pCheckBoxJaune.setChecked(false);
-                    pTextViewEclaireur1.setText("");
                     pCheckBoxEclaireur.setChecked(false);
-                    pTextViewMeneur1.setText("");
                     pCheckBoxMeneur.setChecked(false);
-                    pTextViewLanterne1.setText("");
                     pCheckBoxLanterne.setChecked(false);
-                    pTextViewBinome1.setText("");
                     pCheckBoxBinome.setChecked(false);
                 }
                 else
                 {
                     pBoutonUpdateActif &= 0x03;
-                    pTextViewConducteur1.setText("");
-                    pTextViewPresent1.setText("");
                 }
                 activerBouton();
             }
@@ -235,24 +225,15 @@ public class ItemDetailFragment extends Fragment {
                 if (pCheckBoxJaune.isChecked())
                 {
                     pBoutonUpdateActif |= 0x4;
-                    pTextViewJaune1.setText("+1");
-                    pTextViewPresent1.setText("+1");
-                    pTextViewConducteur1.setText("");
                     pCheckBoxConducteur.setChecked(false);
-                    pTextViewEclaireur1.setText("");
                     pCheckBoxEclaireur.setChecked(false);
-                    pTextViewMeneur1.setText("");
                     pCheckBoxMeneur.setChecked(false);
-                    pTextViewLanterne1.setText("");
                     pCheckBoxLanterne.setChecked(false);
-                    pTextViewBinome1.setText("");
                     pCheckBoxBinome.setChecked(false);
                 }
                 else
                 {
                     pBoutonUpdateActif &= 0x05;
-                    pTextViewJaune1.setText("");
-                    pTextViewPresent1.setText("");
                 }
                 activerBouton();
             }
@@ -264,24 +245,15 @@ public class ItemDetailFragment extends Fragment {
                 if (pCheckBoxEclaireur.isChecked())
                 {
                     pBoutonUpdateActif |= 0x8;
-                    pTextViewEclaireur1.setText("+1");
-                    pTextViewPresent1.setText("+1");
-                    pTextViewConducteur1.setText("");
                     pCheckBoxConducteur.setChecked(false);
-                    pTextViewJaune1.setText("");
                     pCheckBoxJaune.setChecked(false);
-                    pTextViewMeneur1.setText("");
                     pCheckBoxMeneur.setChecked(false);
-                    pTextViewLanterne1.setText("");
                     pCheckBoxLanterne.setChecked(false);
-                    pTextViewBinome1.setText("");
                     pCheckBoxBinome.setChecked(false);
                 }
                 else
                 {
                     pBoutonUpdateActif &= 0x09;
-                    pTextViewEclaireur1.setText("");
-                    pTextViewPresent1.setText("");
                 }
                 activerBouton();
             }
@@ -293,24 +265,15 @@ public class ItemDetailFragment extends Fragment {
                 if (pCheckBoxMeneur.isChecked())
                 {
                     pBoutonUpdateActif |= 0x10;
-                    pTextViewMeneur1.setText("+1");
-                    pTextViewPresent1.setText("+1");
-                    pTextViewConducteur1.setText("");
                     pCheckBoxConducteur.setChecked(false);
-                    pTextViewJaune1.setText("");
                     pCheckBoxJaune.setChecked(false);
-                    pTextViewEclaireur1.setText("");
                     pCheckBoxEclaireur.setChecked(false);
-                    pTextViewLanterne1.setText("");
                     pCheckBoxLanterne.setChecked(false);
-                    pTextViewBinome1.setText("");
                     pCheckBoxBinome.setChecked(false);
                 }
                 else
                 {
                     pBoutonUpdateActif &= 0x11;
-                    pTextViewMeneur1.setText("");
-                    pTextViewPresent1.setText("");
                 }
                 activerBouton();
             }
@@ -322,24 +285,15 @@ public class ItemDetailFragment extends Fragment {
                 if (pCheckBoxLanterne.isChecked())
                 {
                     pBoutonUpdateActif |= 0x20;
-                    pTextViewLanterne1.setText("+1");
-                    pTextViewPresent1.setText("+1");
-                    pTextViewConducteur1.setText("");
                     pCheckBoxConducteur.setChecked(false);
-                    pTextViewJaune1.setText("");
                     pCheckBoxJaune.setChecked(false);
-                    pTextViewEclaireur1.setText("");
                     pCheckBoxEclaireur.setChecked(false);
-                    pTextViewMeneur1.setText("");
                     pCheckBoxMeneur.setChecked(false);
-                    pTextViewBinome1.setText("");
                     pCheckBoxBinome.setChecked(false);
                 }
                 else
                 {
                     pBoutonUpdateActif &= 0x21;
-                    pTextViewLanterne1.setText("");
-                    pTextViewPresent1.setText("");
                 }
                 activerBouton();
             }
@@ -351,24 +305,15 @@ public class ItemDetailFragment extends Fragment {
                 if (pCheckBoxBinome.isChecked())
                 {
                     pBoutonUpdateActif |= 0x40;
-                    pTextViewBinome1.setText("+1");
-                    pTextViewPresent1.setText("+1");
-                    pTextViewConducteur1.setText("");
                     pCheckBoxConducteur.setChecked(false);
-                    pTextViewJaune1.setText("");
                     pCheckBoxJaune.setChecked(false);
-                    pTextViewEclaireur1.setText("");
                     pCheckBoxEclaireur.setChecked(false);
-                    pTextViewMeneur1.setText("");
                     pCheckBoxMeneur.setChecked(false);
-                    pTextViewLanterne1.setText("");
                     pCheckBoxLanterne.setChecked(false);
                 }
                 else
                 {
                     pBoutonUpdateActif &= 0x41;
-                    pTextViewBinome1.setText("");
-                    pTextViewPresent1.setText("");
                 }
                 activerBouton();
             }
@@ -385,37 +330,32 @@ public class ItemDetailFragment extends Fragment {
                         int valeur;
                         int poste_id;
 
-                        if (pCheckBoxPresent.isChecked())
-                        {
+                        if (pCheckBoxPresent.isChecked()) {
                             valeur = 1;
+                            if (pCheckBoxConducteur.isChecked()) //pTextViewConducteur1.getText().equals("+1"))
+                            {
+                                poste_id = 4;
+                            } else if (pCheckBoxJaune.isChecked()) //pTextViewJaune1.getText().equals("+1"))
+                            {
+                                poste_id = 0;
+                            } else if (pCheckBoxEclaireur.isChecked()) //pTextViewEclaireur1.getText().equals("+1"))
+                            {
+                                poste_id = 1;
+                            } else if (pCheckBoxMeneur.isChecked()) //pTextViewMeneur1.getText().equals("+1"))
+                            {
+                                poste_id = 2;
+                            } else if (pCheckBoxLanterne.isChecked()) //pTextViewLanterne1.getText().equals("+1"))
+                            {
+                                poste_id = 3;
+                            } else // if (pCheckBoxBinome.isChecked()) // if (pTextViewBinome1.getText().equals("+1"))
+                            {
+                                poste_id = 6;
+                            }
                         }
                         else
                         {
                             valeur = 0;
-                        }
-                        if (pTextViewConducteur1.getText().equals("+1"))
-                        {
-                            poste_id = 4;
-                        }
-                        else if (pTextViewJaune1.getText().equals("+1"))
-                        {
                             poste_id = 0;
-                        }
-                        else if (pTextViewEclaireur1.getText().equals("+1"))
-                        {
-                            poste_id = 1;
-                        }
-                        else if (pTextViewMeneur1.getText().equals("+1"))
-                        {
-                            poste_id = 2;
-                        }
-                        else if (pTextViewLanterne1.getText().equals("+1"))
-                        {
-                            poste_id = 3;
-                        }
-                        else // if (pTextViewBinome1.getText().equals("+1"))
-                        {
-                            poste_id = 6;
                         }
                         try {
                             URL lURL = new URL(String.format(getString(R.string.out_URL), pRandonneeId, pStaffeurId, valeur, poste_id));
@@ -450,7 +390,39 @@ public class ItemDetailFragment extends Fragment {
             pTextViewPresence.setText(pStaffeur.lirePresence());
             if (pStaffeur.lirePresence().equals(getString(R.string.staff_present)))
             {
+                pBoutonUpdateActif = 0x1;
                 pCheckBoxPresent.setChecked(true);
+                switch(pStaffeur.lirePoste()) {
+                    case 0 : // jaune
+                        pCheckBoxJaune.setChecked(true);
+                        pBoutonUpdateActif |= 0x4;
+                        break;
+                    case 1 : // éclaireur
+                        pCheckBoxEclaireur.setChecked(true);
+                        pBoutonUpdateActif |= 0x8;
+                        break;
+                    case 2 : // meneur
+                        pCheckBoxMeneur.setChecked(true);
+                        pBoutonUpdateActif |= 0x10;
+                        break;
+                    case 3 : // lanterne
+                        pCheckBoxLanterne.setChecked(true);
+                        pBoutonUpdateActif |= 0x20;
+                        break;
+                    case 4 : // conducteur
+                        pCheckBoxConducteur.setChecked(true);
+                        pBoutonUpdateActif |= 0x2;
+                        break;
+                    case 5 : // électron
+                        break;
+                    case 6 : // binôme
+                        pCheckBoxBinome.setChecked(true);
+                        pBoutonUpdateActif |= 0x40;
+                        break;
+                    default : // autre (impossible)
+                        break;
+                }
+                pBoutonUpdateActifMem = pBoutonUpdateActif;
             }
             else
             {

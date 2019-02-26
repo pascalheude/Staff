@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +49,7 @@ import java.util.Date;
  */
 public class ItemListActivity extends AppCompatActivity {
     // Attributs privés
+    private final static int REQUEST_CODE = 10;
     private boolean mTwoPane;
     private View pRecyclerView;
     private TextView pTextViewDate;
@@ -200,7 +202,7 @@ public class ItemListActivity extends AppCompatActivity {
                         holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurOrange));
                         break;
                     case 4 : // conducteur
-                        holder.aPresenceView.setText("Conducteur");
+                        holder.aPresenceView.setText("Pilote");
                         holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurConducteur));
                         break;
                     case 5 : // électron
@@ -255,7 +257,7 @@ public class ItemListActivity extends AppCompatActivity {
                         intent.putExtra(getString(R.string.lanterne), holder.aStaffeur.lireLanterne());
                         intent.putExtra(getString(R.string.binome), holder.aStaffeur.lireBinome());
                         intent.putExtra(getString(R.string.present), holder.aStaffeur.lirePresent());
-                        context.startActivity(intent);
+                        startActivityForResult(intent, REQUEST_CODE);
                     }
                 }
             });
@@ -450,8 +452,28 @@ public class ItemListActivity extends AppCompatActivity {
             // TODO : n'afficher que si la chaine result est différente de null
             pSimpleItemRecyclerViewAdapter1 = new SimpleItemRecyclerViewAdapter(pListeStaffeur1);
             pSimpleItemRecyclerViewAdapter2 = new SimpleItemRecyclerViewAdapter(pListeStaffeur2);
-            ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter1);
-            pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent1), 16, Color.WHITE));
+            if (pPremiereRandonnee) {
+                ((RecyclerView) pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter1);
+                pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent1), 16, Color.WHITE));
+            }
+            else {
+                ((RecyclerView) pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter2);
+                pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent2), 16, Color.WHITE));
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            pListeStaffeur1.clear();
+            pListeStaffeur2.clear();
+            // Lire la base de données du staff
+            DownloadTask downloadTask = new DownloadTask();
+            downloadTask.execute(pURL);
+        }
+        else {
         }
     }
 }

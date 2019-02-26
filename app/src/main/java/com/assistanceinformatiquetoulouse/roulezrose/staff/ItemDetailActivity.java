@@ -16,6 +16,7 @@ import android.view.MenuItem;
  * item contenu are presented side-by-side with a list of items
  * in a {@link ItemListActivity}.
  */
+// Class ItemDetailActivity
 public class ItemDetailActivity extends AppCompatActivity {
 
     @Override
@@ -98,5 +99,11 @@ public class ItemDetailActivity extends AppCompatActivity {
         {
         }
         return(super.onOptionsItemSelected(item));
+    }
+
+    @Override
+    public void finish() {
+        setResult(RESULT_OK);
+        super.finish();
     }
 }
