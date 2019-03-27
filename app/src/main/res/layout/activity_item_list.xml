@@ -15,7 +15,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="40sp" />
+            android:layout_height="10sp" />
         <TextView
             android:id="@+id/dateRandonnee"
             android:layout_width="match_parent"
@@ -24,7 +24,12 @@
             android:textSize="30sp"
             android:textColor="@color/colorBlack"
             android:textStyle="bold" />
-        <include layout="@layout/item_list" />
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <include layout="@layout/item_list" />
+        </android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton

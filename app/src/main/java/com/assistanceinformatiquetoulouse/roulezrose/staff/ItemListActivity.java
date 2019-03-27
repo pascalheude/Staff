@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -52,6 +53,7 @@ public class ItemListActivity extends AppCompatActivity {
     private final static int REQUEST_CODE = 10;
     private boolean mTwoPane;
     private View pRecyclerView;
+    private SwipeRefreshLayout pSwipeRefreshLayout;
     private TextView pTextViewDate;
     private FloatingActionButton pFloatingActionButtonRandonne;
     private FloatingActionButton pFloatingActionPresent;
@@ -89,6 +91,8 @@ public class ItemListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
         pRecyclerView = findViewById(R.id.item_list);
+        pSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        pSwipeRefreshLayout.setSize(SwipeRefreshLayout.LARGE);
         pTextViewDate = (TextView) findViewById(R.id.dateRandonnee);
         pFloatingActionButtonRandonne = (FloatingActionButton) findViewById(R.id.fabRandonnee);
         pFloatingActionPresent = (FloatingActionButton) findViewById(R.id.fabPresent);
@@ -100,6 +104,16 @@ public class ItemListActivity extends AppCompatActivity {
         // Lire la base de données du staff
         DownloadTask downloadTask = new DownloadTask();
         downloadTask.execute(pURL);
+
+        pSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                pListeStaffeur1.clear();
+                pListeStaffeur2.clear();
+                // Lire la base de données du staff
+                DownloadTask downloadTask = new DownloadTask();
+                downloadTask.execute(pURL);
+        }});
 
         pFloatingActionButtonRandonne.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,7 +160,7 @@ public class ItemListActivity extends AppCompatActivity {
             case R.id.action_about:
                 AlertDialog.Builder lAlertDialog = new AlertDialog.Builder(this);
                 lAlertDialog.setTitle("Staff\nVersion " + this.getString(R.string.version));
-                lAlertDialog.setMessage("Compatible index version " + this.getString(R.string.index) + " et update version " + this.getString(R.string.update) + "\nGestion de la présence des staffeurs\n© AIT 2018 (pascalh)\n\nassistanceinformatiquetoulouse@gmail.com");
+                lAlertDialog.setMessage("Compatible index version " + this.getString(R.string.index) + " et update version " + this.getString(R.string.update) + "\nGestion de la présence des staffeurs\n© AIT 2019 (pascalh)\n\nassistanceinformatiquetoulouse@gmail.com");
                 lAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                     }});
@@ -448,18 +462,19 @@ public class ItemListActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            pTextViewDate.setText(result);
-            // TODO : n'afficher que si la chaine result est différente de null
             pSimpleItemRecyclerViewAdapter1 = new SimpleItemRecyclerViewAdapter(pListeStaffeur1);
             pSimpleItemRecyclerViewAdapter2 = new SimpleItemRecyclerViewAdapter(pListeStaffeur2);
             if (pPremiereRandonnee) {
+                pTextViewDate.setText(pDate1String);
                 ((RecyclerView) pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter1);
                 pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent1), 16, Color.WHITE));
             }
             else {
+                pTextViewDate.setText(pDate2String);
                 ((RecyclerView) pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter2);
                 pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent2), 16, Color.WHITE));
             }
+            pSwipeRefreshLayout.setRefreshing(false);
         }
     }
 
