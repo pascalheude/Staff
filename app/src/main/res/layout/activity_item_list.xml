@@ -33,12 +33,21 @@
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabRandonnee"
+        android:id="@+id/fabProchaineRandonnee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_fleche_droite_rouge"
+        app:backgroundTint="@color/colorLightGrey"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabPrecedenteRandonnee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_fleche_gauche_rouge"
         app:backgroundTint="@color/colorLightGrey"/>
 
     <android.support.design.widget.FloatingActionButton

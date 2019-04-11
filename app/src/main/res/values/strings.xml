@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">Staff</string>
-    <string name="version">0.6.7</string>
-    <string name="index">6</string>
+    <string name="version">0.7.0</string>
+    <string name="index">7</string>
     <string name="update">4</string>
     <string name="action_about">About</string>
     <string name="title_item_detail">To be defined</string>
-    <string name="in_URL">https://forum.roulezrose.com/Android/staff_index.php</string>
+    <string name="in_URL">https://forum.roulezrose.com/Android/staff_index2.php</string>
     <string name="out_URL">https://forum.roulezrose.com/Android/staff_update.php?rando_id=%d&amp;user_id=%d&amp;valeur=%d&amp;poste_id=%d</string>
     <!--string name="in_URL">http://82.224.153.132/roulezrose/index.php</string>
     <string name="out_URL">http://82.224.153.132/roulezrose/update.php?rando_id=%d&amp;user_id=%d&amp;poste_id=%d</string-->

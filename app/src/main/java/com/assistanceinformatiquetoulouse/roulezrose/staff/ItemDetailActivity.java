@@ -26,7 +26,7 @@ public class ItemDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabRandonnee);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabProchaineRandonnee);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

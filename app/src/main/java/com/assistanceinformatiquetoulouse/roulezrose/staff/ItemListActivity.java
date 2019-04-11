@@ -22,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +35,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,20 +55,17 @@ public class ItemListActivity extends AppCompatActivity {
     private View pRecyclerView;
     private SwipeRefreshLayout pSwipeRefreshLayout;
     private TextView pTextViewDate;
-    private FloatingActionButton pFloatingActionButtonRandonne;
+    private FloatingActionButton pFloatingActionButtonProchaineRandonnee;
+    private FloatingActionButton pFloatingActionButtonPrecedenteRandonnee;
     private FloatingActionButton pFloatingActionPresent;
-    private SimpleItemRecyclerViewAdapter pSimpleItemRecyclerViewAdapter1;
-    private SimpleItemRecyclerViewAdapter pSimpleItemRecyclerViewAdapter2;
-    private boolean pPremiereRandonnee; // TRUE si la randonnée n°1 est affichée
+    private SimpleItemRecyclerViewAdapter pSimpleItemRecyclerViewAdapter[];
+    private int pNbRandonnee; // Nombre de randonnées reçues
+    private int pNumRandonnee; // Numéro de la randonnée affichée
     private String pURL;    // URL pour lire le fichier json à partir de la base de données
-    private int pId1;   // ID de la randonnée n°1 (rando_id)
-    private int pId2;   // ID de la randonnée n°2 (rando_id)
-    private int pStaffPresent1; // nombre de staffeurs présents à la randonnée n°1
-    private int pStaffPresent2; // nombre de staffeurs présents à la randonnée n°2
-    private String pDate1String;    // date de la randonnée n°1
-    private String pDate2String;    // date de la randonnée n°2
-    private ArrayList<Staffeur> pListeStaffeur1;    // liste des staffeurs de la randonnée n°1
-    private ArrayList<Staffeur> pListeStaffeur2;    // liste des staffeurs de la randonnée n°2
+    private int pId[];   // ID des randonnées (rando_id)
+    private int pStaffPresent[]; // nombre de staffeurs présents à chaque randonnée
+    private String pDateString[];    // date des randonnées
+    private ArrayList<Staffeur> pListeStaffeur[];    // liste des staffeurs de chaque randonnée
 
     public static Bitmap textAsBitmap(String text, float textSize, int textColor) {
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -94,12 +91,11 @@ public class ItemListActivity extends AppCompatActivity {
         pSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         pSwipeRefreshLayout.setSize(SwipeRefreshLayout.LARGE);
         pTextViewDate = (TextView) findViewById(R.id.dateRandonnee);
-        pFloatingActionButtonRandonne = (FloatingActionButton) findViewById(R.id.fabRandonnee);
+        pFloatingActionButtonProchaineRandonnee = (FloatingActionButton) findViewById(R.id.fabProchaineRandonnee);
+        pFloatingActionButtonPrecedenteRandonnee = (FloatingActionButton) findViewById(R.id.fabPrecedenteRandonnee);
         pFloatingActionPresent = (FloatingActionButton) findViewById(R.id.fabPresent);
-        pPremiereRandonnee = true;
+        pNumRandonnee = 1;
         pURL = getString(R.string.in_URL);
-        pListeStaffeur1 = new ArrayList<>();
-        pListeStaffeur2 = new ArrayList<>();
         assert pRecyclerView != null;
         // Lire la base de données du staff
         DownloadTask downloadTask = new DownloadTask();
@@ -108,32 +104,51 @@ public class ItemListActivity extends AppCompatActivity {
         pSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                pListeStaffeur1.clear();
-                pListeStaffeur2.clear();
+                for (int i = 0;i < pListeStaffeur.length; i++) {
+                    pListeStaffeur[i].clear();
+                }
                 // Lire la base de données du staff
                 DownloadTask downloadTask = new DownloadTask();
                 downloadTask.execute(pURL);
         }});
 
-        pFloatingActionButtonRandonne.setOnClickListener(new View.OnClickListener() {
+        pFloatingActionButtonProchaineRandonnee.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (pPremiereRandonnee) {
-                    pFloatingActionButtonRandonne.setImageResource(R.drawable.ic_fleche_gauche_rouge);
-                    pTextViewDate.setText(pDate2String);
-                    ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter2);
-                    pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent2), 16, Color.WHITE));
-                    pPremiereRandonnee = false;
+                if (pNumRandonnee < pNbRandonnee) {
+                    pTextViewDate.setText(pDateString[pNumRandonnee]);
+                    ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter[pNumRandonnee]);
+                    pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent[pNumRandonnee]), 16, Color.WHITE));
+                    pNumRandonnee++;
+                    pFloatingActionButtonPrecedenteRandonnee.setEnabled(true);
+                    if (pNumRandonnee == pNbRandonnee) {
+                        pFloatingActionButtonProchaineRandonnee.setEnabled(false);
+                    }
+                    else {
+                    }
                 }
                 else {
-                    pFloatingActionButtonRandonne.setImageResource(R.drawable.ic_fleche_droite_rouge);
-                    pTextViewDate.setText(pDate1String);
-                    ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter1);
-                    pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent1), 16, Color.WHITE));
-                    pPremiereRandonnee = true;
                 }
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 //        .setAction("Action", null).show();
+            }
+        });
+
+        pFloatingActionButtonPrecedenteRandonnee.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (pNumRandonnee > 1) {
+                    pNumRandonnee--;
+                    pTextViewDate.setText(pDateString[pNumRandonnee - 1]);
+                    ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter[pNumRandonnee - 1]);
+                    pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent[pNumRandonnee - 1]), 16, Color.WHITE));
+                    pFloatingActionButtonProchaineRandonnee.setEnabled(true);
+                    if (pNumRandonnee == 1) {
+                        pFloatingActionButtonPrecedenteRandonnee.setEnabled(false);
+                    }
+                }
+                else {
+                }
             }
         });
 
@@ -253,13 +268,7 @@ public class ItemListActivity extends AppCompatActivity {
                     else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, ItemDetailActivity.class);
-                        if (pPremiereRandonnee) {
-                            intent.putExtra(getString(R.string.randonnee), pId1);
-                        }
-                        else
-                        {
-                            intent.putExtra(getString(R.string.randonnee), pId2);
-                        }
+                        intent.putExtra(getString(R.string.randonnee), pId[pNumRandonnee]);
                         intent.putExtra(getString(R.string.nom), holder.aStaffeur.lireNom());
                         intent.putExtra(getString(R.string.id), holder.aStaffeur.lireId());
                         intent.putExtra(getString(R.string.presence), holder.aStaffeur.lirePresence());
@@ -365,9 +374,10 @@ public class ItemListActivity extends AppCompatActivity {
             String lJSONString = "";
             JSONObject lGlobalJSONObject;
             JSONObject lJSONObjet;
-            JSONArray lListe_staffeur;
-            SimpleDateFormat lSimpleDateFormatIn;
-            SimpleDateFormat lSimpleDateFormatOut;
+            JSONArray liste_randonnees;
+            JSONArray liste_staffeur;
+            SimpleDateFormat lSimpleDateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat lSimpleDateFormatOut = new SimpleDateFormat("EEE dd MMM - H:mm");
             Date lDate;
             try
             {
@@ -375,104 +385,91 @@ public class ItemListActivity extends AppCompatActivity {
                 if (lJSONString != null)
                 {
                     lGlobalJSONObject = new JSONObject(lJSONString);
-                    try {
-                        lSimpleDateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        lDate = lSimpleDateFormatIn.parse(lGlobalJSONObject.getString("Date1"));
-                        lSimpleDateFormatOut = new SimpleDateFormat("EEE dd MMM yyyy");
-                        pDate1String = lSimpleDateFormatOut.format(lDate);
-                        lDate = lSimpleDateFormatIn.parse(lGlobalJSONObject.getString("Date2"));
-                        pDate2String = lSimpleDateFormatOut.format(lDate);
-                    } catch (Exception e) {
-                        pDate1String = "Prochaine randonnée";
-                        pDate2String = "Prochaine randonnée";
-                    }
-                    pId1 = lGlobalJSONObject.getInt("Id1");
-                    pId2 = lGlobalJSONObject.getInt("Id2");
-                    pStaffPresent1 = 0;
-                    pStaffPresent2 = 0;
-                    lListe_staffeur = lGlobalJSONObject.getJSONArray("Staffeurs1");
-                    for (int i = 0; i < lListe_staffeur.length(); i++) {
-                        Staffeur lStaffeur;
-                        lJSONObjet = lListe_staffeur.getJSONObject(i);
-                        lStaffeur = new Staffeur(lJSONObjet.getString(getString(R.string.nom)),
-                                lJSONObjet.getInt(getString(R.string.id)),
-                                lJSONObjet.getString(getString(R.string.presence)),
-                                lJSONObjet.getInt(getString(R.string.poste)),
-                                lJSONObjet.getInt(getString(R.string.conducteur)),
-                                lJSONObjet.getInt(getString(R.string.jaune)),
-                                lJSONObjet.getInt(getString(R.string.eclaireur)),
-                                lJSONObjet.getInt(getString(R.string.meneur)),
-                                lJSONObjet.getInt(getString(R.string.lanterne)),
-                                lJSONObjet.getInt((getString(R.string.binome))),
-                                lJSONObjet.getInt(getString(R.string.present)));
-                        if (lStaffeur.lirePresence().equals(getString(R.string.staff_present)))
-                        {
-                            pStaffPresent1++;
+                    pNbRandonnee = lGlobalJSONObject.getInt("Nombre");
+                    pSimpleItemRecyclerViewAdapter = new SimpleItemRecyclerViewAdapter[pNbRandonnee];
+                    pId = new int[pNbRandonnee];
+                    pStaffPresent = new int[pNbRandonnee];
+                    pDateString = new String[pNbRandonnee];
+                    pListeStaffeur = new ArrayList[pNbRandonnee];
+                    liste_randonnees = lGlobalJSONObject.getJSONArray("Randonnees");
+                    for (int i = 0;i < liste_randonnees.length(); i++) {
+                        lJSONObjet = liste_randonnees.getJSONObject(i);
+                        pId[i] = lJSONObjet.getInt("Id");
+                        try {
+                            lDate = lSimpleDateFormatIn.parse(lJSONObjet.getString("Date"));
+                            pDateString[i] = lSimpleDateFormatOut.format(lDate);
+                        } catch (ParseException e) {
+                            pDateString[i] = "Date inconnue";
                         }
-                        else
-                        {
+                        pStaffPresent[i] = 0;
+                        pListeStaffeur[i] = new ArrayList<>();
+                        liste_staffeur = lJSONObjet.getJSONArray("Staffeurs");
+                        for (int j = 0; j < liste_staffeur.length(); j++) {
+                            Staffeur lStaffeur;
+                            lJSONObjet = liste_staffeur.getJSONObject(j);
+                            lStaffeur = new Staffeur(lJSONObjet.getString(getString(R.string.nom)),
+                                    lJSONObjet.getInt(getString(R.string.id)),
+                                    lJSONObjet.getString(getString(R.string.presence)),
+                                    lJSONObjet.getInt(getString(R.string.poste)),
+                                    lJSONObjet.getInt(getString(R.string.conducteur)),
+                                    lJSONObjet.getInt(getString(R.string.jaune)),
+                                    lJSONObjet.getInt(getString(R.string.eclaireur)),
+                                    lJSONObjet.getInt(getString(R.string.meneur)),
+                                    lJSONObjet.getInt(getString(R.string.lanterne)),
+                                    lJSONObjet.getInt((getString(R.string.binome))),
+                                    lJSONObjet.getInt(getString(R.string.present)));
+                            if (lStaffeur.lirePresence().equals(getString(R.string.staff_present)))
+                            {
+                                pStaffPresent[i]++;
+                            }
+                            else
+                            {
+                            }
+                            pListeStaffeur[i].add(lStaffeur);
                         }
-                        pListeStaffeur1.add(lStaffeur);
-                    }
-                    lListe_staffeur = lGlobalJSONObject.getJSONArray("Staffeurs2");
-                    for (int i = 0; i < lListe_staffeur.length(); i++) {
-                        Staffeur lStaffeur;
-                        lJSONObjet = lListe_staffeur.getJSONObject(i);
-                        lStaffeur = new Staffeur(lJSONObjet.getString(getString(R.string.nom)),
-                                lJSONObjet.getInt(getString(R.string.id)),
-                                lJSONObjet.getString(getString(R.string.presence)),
-                                lJSONObjet.getInt(getString(R.string.poste)),
-                                lJSONObjet.getInt(getString(R.string.conducteur)),
-                                lJSONObjet.getInt(getString(R.string.jaune)),
-                                lJSONObjet.getInt(getString(R.string.eclaireur)),
-                                lJSONObjet.getInt(getString(R.string.meneur)),
-                                lJSONObjet.getInt(getString(R.string.lanterne)),
-                                lJSONObjet.getInt(getString(R.string.binome)),
-                                lJSONObjet.getInt(getString(R.string.present)));
-                        if (lStaffeur.lirePresence().equals(getString(R.string.staff_present)))
-                        {
-                            pStaffPresent2++;
-                        }
-                        else
-                        {
-                        }
-                        pListeStaffeur2.add(lStaffeur);
+                        pSimpleItemRecyclerViewAdapter[i] = new SimpleItemRecyclerViewAdapter(pListeStaffeur[i]);
                     }
                 }
                 else
                 {
-                    pDate1String = "Impossible d'accéder au serveur de données";
-                    pDate2String = "Impossible d'accéder au serveur de données";
+                    pNbRandonnee = 1;
+                    pDateString = new String[1];
+                    pDateString[0] = "Impossible d'accéder au serveur de données";
                 }
             }
             catch(IOException e)
             {
-                pDate1String = e.toString();
-                pDate2String = e.toString();
+                pNbRandonnee = 1;
+                pDateString = new String[1];
+                pDateString[0] = e.toString();
                 Log.d("Background Task", e.toString());
             }
             catch(JSONException e)
             {
-                pDate1String = "Erreur JSON";
-                pDate2String = "Erreur JSON";
+                pNbRandonnee = 1;
+                pDateString = new String[1];
+                pDateString[0] = "Erreur JSON";
                 e.printStackTrace();
             }
-            return(pDate1String);
+            return(pDateString[0]);
         }
 
         @Override
         protected void onPostExecute(String result) {
-            pSimpleItemRecyclerViewAdapter1 = new SimpleItemRecyclerViewAdapter(pListeStaffeur1);
-            pSimpleItemRecyclerViewAdapter2 = new SimpleItemRecyclerViewAdapter(pListeStaffeur2);
-            if (pPremiereRandonnee) {
-                pTextViewDate.setText(pDate1String);
-                ((RecyclerView) pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter1);
-                pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent1), 16, Color.WHITE));
+            pTextViewDate.setText(pDateString[pNumRandonnee - 1]);
+            ((RecyclerView) pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter[pNumRandonnee - 1]);
+            pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent[pNumRandonnee - 1]), 16, Color.WHITE));
+            if (pNumRandonnee == 1) {
+                pFloatingActionButtonPrecedenteRandonnee.setEnabled(false);
+                pFloatingActionButtonProchaineRandonnee.setEnabled(true);
+            }
+            else if (pNumRandonnee == pNbRandonnee) {
+                pFloatingActionButtonPrecedenteRandonnee.setEnabled(true);
+                pFloatingActionButtonProchaineRandonnee.setEnabled(false);
             }
             else {
-                pTextViewDate.setText(pDate2String);
-                ((RecyclerView) pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter2);
-                pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent2), 16, Color.WHITE));
+                pFloatingActionButtonPrecedenteRandonnee.setEnabled(true);
+                pFloatingActionButtonProchaineRandonnee.setEnabled(true);
             }
             pSwipeRefreshLayout.setRefreshing(false);
         }
@@ -482,8 +479,9 @@ public class ItemListActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            pListeStaffeur1.clear();
-            pListeStaffeur2.clear();
+            for (int i = 0;i < pListeStaffeur.length; i++) {
+                pListeStaffeur[i].clear();
+            }
             // Lire la base de données du staff
             DownloadTask downloadTask = new DownloadTask();
             downloadTask.execute(pURL);
