@@ -268,7 +268,7 @@ public class ItemListActivity extends AppCompatActivity {
                     else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, ItemDetailActivity.class);
-                        intent.putExtra(getString(R.string.randonnee), pId[pNumRandonnee]);
+                        intent.putExtra(getString(R.string.randonnee), pId[pNumRandonnee - 1]);
                         intent.putExtra(getString(R.string.nom), holder.aStaffeur.lireNom());
                         intent.putExtra(getString(R.string.id), holder.aStaffeur.lireId());
                         intent.putExtra(getString(R.string.presence), holder.aStaffeur.lirePresence());
