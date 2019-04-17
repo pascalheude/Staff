@@ -3,8 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.assistanceinformatiquetoulouse.roulezrose.staff.ItemListActivity">
     <item
-        android:id="@+id/action_about"
+        android:id="@+id/action_parametres"
         android:orderInCategory="100"
+        android:title="Paramètres"
+        app:showAsAction="never"
+        android:visible="true" />
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="101"
         android:title="@string/action_about"
         app:showAsAction="never"
         android:visible="true" />

@@ -3,6 +3,7 @@ package com.assistanceinformatiquetoulouse.roulezrose.staff;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -50,7 +51,9 @@ import java.util.Date;
  */
 public class ItemListActivity extends AppCompatActivity {
     // Attributs privés
-    private final static int REQUEST_CODE = 10;
+    private final static int REQUEST_CODE_PARAMETRES = 10;
+    private final static int REQUEST_CODE_PRESENCE = 20;
+    private SharedPreferences pSharedPreferences;
     private boolean mTwoPane;
     private View pRecyclerView;
     private SwipeRefreshLayout pSwipeRefreshLayout;
@@ -59,7 +62,7 @@ public class ItemListActivity extends AppCompatActivity {
     private FloatingActionButton pFloatingActionButtonPrecedenteRandonnee;
     private FloatingActionButton pFloatingActionPresent;
     private SimpleItemRecyclerViewAdapter pSimpleItemRecyclerViewAdapter[];
-    private int pNbRandonnee; // Nombre de randonnées reçues
+    private int pNbRandonnees; // Nombre de randonnées reçues
     private int pNumRandonnee; // Numéro de la randonnée affichée
     private String pURL;    // URL pour lire le fichier json à partir de la base de données
     private int pId[];   // ID des randonnées (rando_id)
@@ -94,8 +97,15 @@ public class ItemListActivity extends AppCompatActivity {
         pFloatingActionButtonProchaineRandonnee = (FloatingActionButton) findViewById(R.id.fabProchaineRandonnee);
         pFloatingActionButtonPrecedenteRandonnee = (FloatingActionButton) findViewById(R.id.fabPrecedenteRandonnee);
         pFloatingActionPresent = (FloatingActionButton) findViewById(R.id.fabPresent);
+        pSharedPreferences = getBaseContext().getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
+        if (pSharedPreferences.contains(getString(R.string.memorized_data))) {
+            pNbRandonnees = pSharedPreferences.getInt(getString(R.string.memorized_data), 4);
+        }
+        else {
+            pNbRandonnees = 4;
+        }
         pNumRandonnee = 1;
-        pURL = getString(R.string.in_URL);
+        pURL = String.format(getString(R.string.in_URL), pNbRandonnees);
         assert pRecyclerView != null;
         // Lire la base de données du staff
         DownloadTask downloadTask = new DownloadTask();
@@ -115,13 +125,13 @@ public class ItemListActivity extends AppCompatActivity {
         pFloatingActionButtonProchaineRandonnee.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (pNumRandonnee < pNbRandonnee) {
+                if (pNumRandonnee < pNbRandonnees) {
                     pTextViewDate.setText(pDateString[pNumRandonnee]);
                     ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter[pNumRandonnee]);
                     pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent[pNumRandonnee]), 16, Color.WHITE));
                     pNumRandonnee++;
                     pFloatingActionButtonPrecedenteRandonnee.setEnabled(true);
-                    if (pNumRandonnee == pNbRandonnee) {
+                    if (pNumRandonnee == pNbRandonnees) {
                         pFloatingActionButtonProchaineRandonnee.setEnabled(false);
                     }
                     else {
@@ -181,6 +191,11 @@ public class ItemListActivity extends AppCompatActivity {
                     }});
                 lAlertDialog.setIcon(R.mipmap.ic_staff);
                 lAlertDialog.create().show();
+                break;
+            case R.id.action_parametres:
+                Intent lIntent = new Intent(this, ParametresActivity.class);
+                lIntent.putExtra("nb_randonnees_in", pNbRandonnees);
+                startActivityForResult(lIntent, REQUEST_CODE_PARAMETRES);
                 break;
         }
         return(true);
@@ -280,7 +295,7 @@ public class ItemListActivity extends AppCompatActivity {
                         intent.putExtra(getString(R.string.lanterne), holder.aStaffeur.lireLanterne());
                         intent.putExtra(getString(R.string.binome), holder.aStaffeur.lireBinome());
                         intent.putExtra(getString(R.string.present), holder.aStaffeur.lirePresent());
-                        startActivityForResult(intent, REQUEST_CODE);
+                        startActivityForResult(intent, REQUEST_CODE_PRESENCE);
                     }
                 }
             });
@@ -385,12 +400,12 @@ public class ItemListActivity extends AppCompatActivity {
                 if (lJSONString != null)
                 {
                     lGlobalJSONObject = new JSONObject(lJSONString);
-                    pNbRandonnee = lGlobalJSONObject.getInt("Nombre");
-                    pSimpleItemRecyclerViewAdapter = new SimpleItemRecyclerViewAdapter[pNbRandonnee];
-                    pId = new int[pNbRandonnee];
-                    pStaffPresent = new int[pNbRandonnee];
-                    pDateString = new String[pNbRandonnee];
-                    pListeStaffeur = new ArrayList[pNbRandonnee];
+                    pNbRandonnees = lGlobalJSONObject.getInt("Nombre");
+                    pSimpleItemRecyclerViewAdapter = new SimpleItemRecyclerViewAdapter[pNbRandonnees];
+                    pId = new int[pNbRandonnees];
+                    pStaffPresent = new int[pNbRandonnees];
+                    pDateString = new String[pNbRandonnees];
+                    pListeStaffeur = new ArrayList[pNbRandonnees];
                     liste_randonnees = lGlobalJSONObject.getJSONArray("Randonnees");
                     for (int i = 0;i < liste_randonnees.length(); i++) {
                         lJSONObjet = liste_randonnees.getJSONObject(i);
@@ -432,21 +447,21 @@ public class ItemListActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    pNbRandonnee = 1;
+                    pNbRandonnees = 1;
                     pDateString = new String[1];
                     pDateString[0] = "Impossible d'accéder au serveur de données";
                 }
             }
             catch(IOException e)
             {
-                pNbRandonnee = 1;
+                pNbRandonnees = 1;
                 pDateString = new String[1];
                 pDateString[0] = e.toString();
                 Log.d("Background Task", e.toString());
             }
             catch(JSONException e)
             {
-                pNbRandonnee = 1;
+                pNbRandonnees = 1;
                 pDateString = new String[1];
                 pDateString[0] = "Erreur JSON";
                 e.printStackTrace();
@@ -463,7 +478,7 @@ public class ItemListActivity extends AppCompatActivity {
                 pFloatingActionButtonPrecedenteRandonnee.setEnabled(false);
                 pFloatingActionButtonProchaineRandonnee.setEnabled(true);
             }
-            else if (pNumRandonnee == pNbRandonnee) {
+            else if (pNumRandonnee == pNbRandonnees) {
                 pFloatingActionButtonPrecedenteRandonnee.setEnabled(true);
                 pFloatingActionButtonProchaineRandonnee.setEnabled(false);
             }
@@ -476,9 +491,18 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         //super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
+        if ((requestCode == REQUEST_CODE_PARAMETRES) && (resultCode == RESULT_OK)) {
+            pNbRandonnees = intent.getIntExtra("nb_randonnees_out", 4);
+            pURL = String.format(getString(R.string.in_URL), pNbRandonnees);
+            SharedPreferences.Editor lEditor = pSharedPreferences.edit();
+            lEditor.putInt(getString(R.string.memorized_data), pNbRandonnees);
+            lEditor.commit();
+        }
+        else {
+        }
+        if ((requestCode == REQUEST_CODE_PRESENCE) && (resultCode == RESULT_OK)) {
             for (int i = 0;i < pListeStaffeur.length; i++) {
                 pListeStaffeur[i].clear();
             }
