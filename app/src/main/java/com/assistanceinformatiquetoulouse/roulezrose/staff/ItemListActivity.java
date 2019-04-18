@@ -66,11 +66,38 @@ public class ItemListActivity extends AppCompatActivity {
     private int pNumRandonnee; // Numéro de la randonnée affichée
     private String pURL;    // URL pour lire le fichier json à partir de la base de données
     private int pId[];   // ID des randonnées (rando_id)
+    private int pType[];  // Type des randonnées (rando_type)
     private int pStaffPresent[]; // nombre de staffeurs présents à chaque randonnée
     private String pDateString[];    // date des randonnées
     private ArrayList<Staffeur> pListeStaffeur[];    // liste des staffeurs de chaque randonnée
 
-    public static Bitmap textAsBitmap(String text, float textSize, int textColor) {
+    private void ecrireDateRandonnee(String date, int type) {
+        pTextViewDate.setText(date);
+        pTextViewDate.setTextColor(getColor(R.color.colorBlack));
+        switch(type) {
+            case 0 : // dimanche
+                pTextViewDate.setBackgroundColor(getColor(R.color.colorRandonneeVerte));
+                break;
+            case 1 : // bleue
+                pTextViewDate.setBackgroundColor(getColor(R.color.colorRandonneeDoubleBleue));
+                break;
+            case 2 : // orange
+                pTextViewDate.setBackgroundColor(getColor(R.color.colorRandonneeDoubleOrange));
+                break;
+            case 3 : // grande boucle
+                pTextViewDate.setBackgroundColor(getColor(R.color.colorRandonneeBleue));
+                break;
+            case 4 : // à thème
+                pTextViewDate.setBackgroundColor(getColor(R.color.colorRandonneeATheme));
+                break;
+            case 5 : // noire
+                pTextViewDate.setBackgroundColor(getColor(R.color.colorBlack));
+                pTextViewDate.setTextColor(getColor(R.color.colorWhite));
+                break;
+        }
+    }
+
+    private static Bitmap textAsBitmap(String text, float textSize, int textColor) {
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setTextSize(textSize);
         paint.setColor(textColor);
@@ -126,7 +153,7 @@ public class ItemListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (pNumRandonnee < pNbRandonnees) {
-                    pTextViewDate.setText(pDateString[pNumRandonnee]);
+                    ecrireDateRandonnee(pDateString[pNumRandonnee], pType[pNumRandonnee]);
                     ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter[pNumRandonnee]);
                     pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent[pNumRandonnee]), 16, Color.WHITE));
                     pNumRandonnee++;
@@ -149,7 +176,7 @@ public class ItemListActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (pNumRandonnee > 1) {
                     pNumRandonnee--;
-                    pTextViewDate.setText(pDateString[pNumRandonnee - 1]);
+                    ecrireDateRandonnee(pDateString[pNumRandonnee - 1], pType[pNumRandonnee - 1]);
                     ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter[pNumRandonnee - 1]);
                     pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent[pNumRandonnee - 1]), 16, Color.WHITE));
                     pFloatingActionButtonProchaineRandonnee.setEnabled(true);
@@ -403,6 +430,7 @@ public class ItemListActivity extends AppCompatActivity {
                     pNbRandonnees = lGlobalJSONObject.getInt("Nombre");
                     pSimpleItemRecyclerViewAdapter = new SimpleItemRecyclerViewAdapter[pNbRandonnees];
                     pId = new int[pNbRandonnees];
+                    pType = new int[pNbRandonnees];
                     pStaffPresent = new int[pNbRandonnees];
                     pDateString = new String[pNbRandonnees];
                     pListeStaffeur = new ArrayList[pNbRandonnees];
@@ -410,6 +438,7 @@ public class ItemListActivity extends AppCompatActivity {
                     for (int i = 0;i < liste_randonnees.length(); i++) {
                         lJSONObjet = liste_randonnees.getJSONObject(i);
                         pId[i] = lJSONObjet.getInt("Id");
+                        pType[i] = lJSONObjet.getInt("Type");
                         try {
                             lDate = lSimpleDateFormatIn.parse(lJSONObjet.getString("Date"));
                             pDateString[i] = lSimpleDateFormatOut.format(lDate);
@@ -471,7 +500,7 @@ public class ItemListActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            pTextViewDate.setText(pDateString[pNumRandonnee - 1]);
+            ecrireDateRandonnee(pDateString[pNumRandonnee - 1], pType[pNumRandonnee - 1]);
             ((RecyclerView) pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter[pNumRandonnee - 1]);
             pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent[pNumRandonnee - 1]), 16, Color.WHITE));
             if (pNumRandonnee == 1) {
