@@ -15,12 +15,12 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="10sp" />
+            android:layout_height="13sp" />
         <TextView
             android:id="@+id/dateRandonnee"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="left"
             android:textSize="30sp"
             android:textColor="@color/colorBlack"
             android:textStyle="bold" />
@@ -36,26 +36,29 @@
         android:id="@+id/fabProchaineRandonnee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
+        android:layout_gravity="center|end"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_fleche_droite_rouge"
+        app:fabSize="mini"
         app:backgroundTint="@color/colorLightGrey"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabPrecedenteRandonnee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
+        android:layout_gravity="center|start"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_fleche_gauche_rouge"
+        app:fabSize="mini"
         app:backgroundTint="@color/colorLightGrey"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabPresent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
+        android:layout_gravity="top|end"
         android:layout_margin="@dimen/fab_margin"
+        app:fabSize="normal"
         app:backgroundTint="@color/colorLightGrey"/>
 
 </android.support.design.widget.CoordinatorLayout>

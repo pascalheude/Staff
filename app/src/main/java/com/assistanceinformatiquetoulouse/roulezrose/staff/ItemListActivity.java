@@ -22,7 +22,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,6 +58,9 @@ public class ItemListActivity extends AppCompatActivity {
     private final static int REQUEST_CODE_PRESENCE = 20;
     private SharedPreferences pSharedPreferences;
     private boolean mTwoPane;
+    private EditText pEditTextLogin;
+    private EditText pEditTextPassword;
+    private CheckBox pCheckBoxMemoriser;
     private View pRecyclerView;
     private SwipeRefreshLayout pSwipeRefreshLayout;
     private TextView pTextViewDate;
@@ -68,6 +74,7 @@ public class ItemListActivity extends AppCompatActivity {
     private int pId[];   // ID des randonnées (rando_id)
     private int pType[];  // Type des randonnées (rando_type)
     private int pStaffPresent[]; // nombre de staffeurs présents à chaque randonnée
+    private int pStaffIndecis[]; // Nombre de staffeurs indécis à chaque randonnée
     private String pDateString[];    // date des randonnées
     private ArrayList<Staffeur> pListeStaffeur[];    // liste des staffeurs de chaque randonnée
 
@@ -117,7 +124,7 @@ public class ItemListActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
-        pRecyclerView = findViewById(R.id.item_list);
+        pRecyclerView = (View) findViewById(R.id.item_list);
         pSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         pSwipeRefreshLayout.setSize(SwipeRefreshLayout.LARGE);
         pTextViewDate = (TextView) findViewById(R.id.dateRandonnee);
@@ -125,13 +132,54 @@ public class ItemListActivity extends AppCompatActivity {
         pFloatingActionButtonPrecedenteRandonnee = (FloatingActionButton) findViewById(R.id.fabPrecedenteRandonnee);
         pFloatingActionPresent = (FloatingActionButton) findViewById(R.id.fabPresent);
         pSharedPreferences = getBaseContext().getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
-        if (pSharedPreferences.contains(getString(R.string.memorized_data))) {
-            pNbRandonnees = pSharedPreferences.getInt(getString(R.string.memorized_data), 4);
+        if (pSharedPreferences.contains(getString(R.string.nb_randonnees))) {
+            pNbRandonnees = pSharedPreferences.getInt(getString(R.string.nb_randonnees), 4);
         }
         else {
             pNbRandonnees = 4;
         }
         pNumRandonnee = 1;
+        LayoutInflater lLayoutInflater = getLayoutInflater();
+        View connexionView = lLayoutInflater.inflate(R.layout.layout_dialog_login, null);
+        pEditTextLogin = (EditText) connexionView.findViewById(R.id.editTextNomUtilisateur);
+        pEditTextPassword = (EditText) connexionView.findViewById(R.id.editTextMotDePasse);
+        pCheckBoxMemoriser = (CheckBox) connexionView.findViewById(R.id.checkBoxMemoriser);
+        if (pSharedPreferences.contains(getString(R.string.memorized_data))) {
+            pEditTextLogin.setText(pSharedPreferences.getString(getString(R.string.login), ""));
+            pEditTextPassword.setText(pSharedPreferences.getString(getString(R.string.password), ""));
+            pCheckBoxMemoriser.setChecked(true);
+        }
+        else {
+            pEditTextLogin.setText("");
+            pEditTextPassword.setText("");
+            pCheckBoxMemoriser.setChecked(false);
+        }
+        AlertDialog.Builder lConnexionDialog = new AlertDialog.Builder(this);
+        lConnexionDialog.setTitle("");
+        lConnexionDialog.setView(connexionView);
+        lConnexionDialog.setCancelable(false);
+        lConnexionDialog.setPositiveButton("Connexion", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getBaseContext(), "Connexion clicked", Toast.LENGTH_SHORT).show();
+                if (pCheckBoxMemoriser.isChecked()) {
+                    SharedPreferences.Editor lEditor = pSharedPreferences.edit();
+                    lEditor.putBoolean(getString(R.string.memorized_data), true);
+                    lEditor.putString(getString(R.string.login), pEditTextLogin.getText().toString());
+                    lEditor.putString(getString(R.string.password), pEditTextPassword.getText().toString());
+                    lEditor.apply();
+                }
+                else {
+                    SharedPreferences.Editor lEditor = pSharedPreferences.edit();
+                    lEditor.remove(getString(R.string.memorized_data));
+                    lEditor.remove(getString(R.string.login));
+                    lEditor.remove(getString(R.string.password));
+                    lEditor.apply();
+                }
+            }
+        });
+        AlertDialog lAlertDialog = lConnexionDialog.create();
+        lAlertDialog.show();
         pURL = String.format(getString(R.string.in_URL), pNbRandonnees);
         assert pRecyclerView != null;
         // Lire la base de données du staff
@@ -144,6 +192,7 @@ public class ItemListActivity extends AppCompatActivity {
                 for (int i = 0;i < pListeStaffeur.length; i++) {
                     pListeStaffeur[i].clear();
                 }
+                pSimpleItemRecyclerViewAdapter[pNumRandonnee].notifyDataSetChanged();
                 // Lire la base de données du staff
                 DownloadTask downloadTask = new DownloadTask();
                 downloadTask.execute(pURL);
@@ -155,7 +204,7 @@ public class ItemListActivity extends AppCompatActivity {
                 if (pNumRandonnee < pNbRandonnees) {
                     ecrireDateRandonnee(pDateString[pNumRandonnee], pType[pNumRandonnee]);
                     ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter[pNumRandonnee]);
-                    pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent[pNumRandonnee]), 16, Color.WHITE));
+                    pFloatingActionPresent.setImageBitmap(textAsBitmap(String.format("%d-%d", pStaffPresent[pNumRandonnee], pStaffIndecis[pNumRandonnee]), 12, Color.WHITE));
                     pNumRandonnee++;
                     pFloatingActionButtonPrecedenteRandonnee.setEnabled(true);
                     if (pNumRandonnee == pNbRandonnees) {
@@ -178,10 +227,12 @@ public class ItemListActivity extends AppCompatActivity {
                     pNumRandonnee--;
                     ecrireDateRandonnee(pDateString[pNumRandonnee - 1], pType[pNumRandonnee - 1]);
                     ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter[pNumRandonnee - 1]);
-                    pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent[pNumRandonnee - 1]), 16, Color.WHITE));
+                    pFloatingActionPresent.setImageBitmap(textAsBitmap(String.format("%d-%d", pStaffPresent[pNumRandonnee - 1], pStaffIndecis[pNumRandonnee - 1]), 12, Color.WHITE));
                     pFloatingActionButtonProchaineRandonnee.setEnabled(true);
                     if (pNumRandonnee == 1) {
                         pFloatingActionButtonPrecedenteRandonnee.setEnabled(false);
+                    }
+                    else {
                     }
                 }
                 else {
@@ -424,14 +475,14 @@ public class ItemListActivity extends AppCompatActivity {
             try
             {
                 lJSONString = lireDonneesDepuisURL(url[0]);
-                if (lJSONString != null)
-                {
+                if (lJSONString != null) {
                     lGlobalJSONObject = new JSONObject(lJSONString);
                     pNbRandonnees = lGlobalJSONObject.getInt("Nombre");
                     pSimpleItemRecyclerViewAdapter = new SimpleItemRecyclerViewAdapter[pNbRandonnees];
                     pId = new int[pNbRandonnees];
                     pType = new int[pNbRandonnees];
                     pStaffPresent = new int[pNbRandonnees];
+                    pStaffIndecis = new int[pNbRandonnees];
                     pDateString = new String[pNbRandonnees];
                     pListeStaffeur = new ArrayList[pNbRandonnees];
                     liste_randonnees = lGlobalJSONObject.getJSONArray("Randonnees");
@@ -446,6 +497,7 @@ public class ItemListActivity extends AppCompatActivity {
                             pDateString[i] = "Date inconnue";
                         }
                         pStaffPresent[i] = 0;
+                        pStaffIndecis[i] = 0;
                         pListeStaffeur[i] = new ArrayList<>();
                         liste_staffeur = lJSONObjet.getJSONArray("Staffeurs");
                         for (int j = 0; j < liste_staffeur.length(); j++) {
@@ -462,34 +514,32 @@ public class ItemListActivity extends AppCompatActivity {
                                     lJSONObjet.getInt(getString(R.string.lanterne)),
                                     lJSONObjet.getInt((getString(R.string.binome))),
                                     lJSONObjet.getInt(getString(R.string.present)));
-                            if (lStaffeur.lirePresence().equals(getString(R.string.staff_present)))
-                            {
+                            if (lStaffeur.lirePresence().equals(getString(R.string.staff_present))) {
                                 pStaffPresent[i]++;
                             }
-                            else
-                            {
+                            else if (lStaffeur.lirePresence().equals("indécis")) {
+                                pStaffIndecis[i]++;
+                            }
+                            else {
                             }
                             pListeStaffeur[i].add(lStaffeur);
                         }
                         pSimpleItemRecyclerViewAdapter[i] = new SimpleItemRecyclerViewAdapter(pListeStaffeur[i]);
                     }
                 }
-                else
-                {
+                else {
                     pNbRandonnees = 1;
                     pDateString = new String[1];
                     pDateString[0] = "Impossible d'accéder au serveur de données";
                 }
             }
-            catch(IOException e)
-            {
+            catch(IOException e) {
                 pNbRandonnees = 1;
                 pDateString = new String[1];
                 pDateString[0] = e.toString();
                 Log.d("Background Task", e.toString());
             }
-            catch(JSONException e)
-            {
+            catch(JSONException e) {
                 pNbRandonnees = 1;
                 pDateString = new String[1];
                 pDateString[0] = "Erreur JSON";
@@ -502,7 +552,7 @@ public class ItemListActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             ecrireDateRandonnee(pDateString[pNumRandonnee - 1], pType[pNumRandonnee - 1]);
             ((RecyclerView) pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter[pNumRandonnee - 1]);
-            pFloatingActionPresent.setImageBitmap(textAsBitmap(String.valueOf(pStaffPresent[pNumRandonnee - 1]), 16, Color.WHITE));
+            pFloatingActionPresent.setImageBitmap(textAsBitmap(String.format("%d-%d", pStaffPresent[pNumRandonnee - 1], pStaffIndecis[pNumRandonnee - 1]), 12, Color.WHITE));
             if (pNumRandonnee == 1) {
                 pFloatingActionButtonPrecedenteRandonnee.setEnabled(false);
                 pFloatingActionButtonProchaineRandonnee.setEnabled(true);
@@ -526,8 +576,8 @@ public class ItemListActivity extends AppCompatActivity {
             pNbRandonnees = intent.getIntExtra("nb_randonnees_out", 4);
             pURL = String.format(getString(R.string.in_URL), pNbRandonnees);
             SharedPreferences.Editor lEditor = pSharedPreferences.edit();
-            lEditor.putInt(getString(R.string.memorized_data), pNbRandonnees);
-            lEditor.commit();
+            lEditor.putInt(getString(R.string.nb_randonnees), pNbRandonnees);
+            lEditor.apply();
         }
         else {
         }
@@ -535,6 +585,7 @@ public class ItemListActivity extends AppCompatActivity {
             for (int i = 0;i < pListeStaffeur.length; i++) {
                 pListeStaffeur[i].clear();
             }
+            pSimpleItemRecyclerViewAdapter[pNumRandonnee].notifyDataSetChanged();
             // Lire la base de données du staff
             DownloadTask downloadTask = new DownloadTask();
             downloadTask.execute(pURL);
