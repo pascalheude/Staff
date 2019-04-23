@@ -22,7 +22,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,6 +58,9 @@ public class ItemListActivity extends AppCompatActivity {
     private final static int REQUEST_CODE_PRESENCE = 20;
     private SharedPreferences pSharedPreferences;
     private boolean mTwoPane;
+    private EditText pEditTextLogin;
+    private EditText pEditTextPassword;
+    private CheckBox pCheckBoxMemoriser;
     private View pRecyclerView;
     private SwipeRefreshLayout pSwipeRefreshLayout;
     private TextView pTextViewDate;
@@ -117,7 +123,7 @@ public class ItemListActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
-        pRecyclerView = findViewById(R.id.item_list);
+        pRecyclerView = (View) findViewById(R.id.item_list);
         pSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         pSwipeRefreshLayout.setSize(SwipeRefreshLayout.LARGE);
         pTextViewDate = (TextView) findViewById(R.id.dateRandonnee);
@@ -125,13 +131,54 @@ public class ItemListActivity extends AppCompatActivity {
         pFloatingActionButtonPrecedenteRandonnee = (FloatingActionButton) findViewById(R.id.fabPrecedenteRandonnee);
         pFloatingActionPresent = (FloatingActionButton) findViewById(R.id.fabPresent);
         pSharedPreferences = getBaseContext().getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
-        if (pSharedPreferences.contains(getString(R.string.memorized_data))) {
-            pNbRandonnees = pSharedPreferences.getInt(getString(R.string.memorized_data), 4);
+        if (pSharedPreferences.contains(getString(R.string.nb_randonnees))) {
+            pNbRandonnees = pSharedPreferences.getInt(getString(R.string.nb_randonnees), 4);
         }
         else {
             pNbRandonnees = 4;
         }
         pNumRandonnee = 1;
+        LayoutInflater lLayoutInflater = getLayoutInflater();
+        View connexionView = lLayoutInflater.inflate(R.layout.layout_dialog_login, null);
+        pEditTextLogin = (EditText) connexionView.findViewById(R.id.editTextNomUtilisateur);
+        pEditTextPassword = (EditText) connexionView.findViewById(R.id.editTextMotDePasse);
+        pCheckBoxMemoriser = (CheckBox) connexionView.findViewById(R.id.checkBoxMemoriser);
+        if (pSharedPreferences.contains(getString(R.string.memorized_data))) {
+            pEditTextLogin.setText(pSharedPreferences.getString(getString(R.string.login), ""));
+            pEditTextPassword.setText(pSharedPreferences.getString(getString(R.string.password), ""));
+            pCheckBoxMemoriser.setChecked(true);
+        }
+        else {
+            pEditTextLogin.setText("");
+            pEditTextPassword.setText("");
+            pCheckBoxMemoriser.setChecked(false);
+        }
+        AlertDialog.Builder lConnexionDialog = new AlertDialog.Builder(this);
+        lConnexionDialog.setTitle("");
+        lConnexionDialog.setView(connexionView);
+        lConnexionDialog.setCancelable(false);
+        lConnexionDialog.setPositiveButton("Connexion", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getBaseContext(), "Connexion clicked", Toast.LENGTH_SHORT).show();
+                if (pCheckBoxMemoriser.isChecked()) {
+                    SharedPreferences.Editor lEditor = pSharedPreferences.edit();
+                    lEditor.putBoolean(getString(R.string.memorized_data), true);
+                    lEditor.putString(getString(R.string.login), pEditTextLogin.getText().toString());
+                    lEditor.putString(getString(R.string.password), pEditTextPassword.getText().toString());
+                    lEditor.apply();
+                }
+                else {
+                    SharedPreferences.Editor lEditor = pSharedPreferences.edit();
+                    lEditor.remove(getString(R.string.memorized_data));
+                    lEditor.remove(getString(R.string.login));
+                    lEditor.remove(getString(R.string.password));
+                    lEditor.apply();
+                }
+            }
+        });
+        AlertDialog lAlertDialog = lConnexionDialog.create();
+        lAlertDialog.show();
         pURL = String.format(getString(R.string.in_URL), pNbRandonnees);
         assert pRecyclerView != null;
         // Lire la base de données du staff
@@ -182,6 +229,8 @@ public class ItemListActivity extends AppCompatActivity {
                     pFloatingActionButtonProchaineRandonnee.setEnabled(true);
                     if (pNumRandonnee == 1) {
                         pFloatingActionButtonPrecedenteRandonnee.setEnabled(false);
+                    }
+                    else {
                     }
                 }
                 else {
@@ -526,8 +575,8 @@ public class ItemListActivity extends AppCompatActivity {
             pNbRandonnees = intent.getIntExtra("nb_randonnees_out", 4);
             pURL = String.format(getString(R.string.in_URL), pNbRandonnees);
             SharedPreferences.Editor lEditor = pSharedPreferences.edit();
-            lEditor.putInt(getString(R.string.memorized_data), pNbRandonnees);
-            lEditor.commit();
+            lEditor.putInt(getString(R.string.nb_randonnees), pNbRandonnees);
+            lEditor.apply();
         }
         else {
         }
