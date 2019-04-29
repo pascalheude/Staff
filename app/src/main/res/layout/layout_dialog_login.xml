@@ -10,12 +10,14 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal">
+
         <TextView
             android:id="@+id/textView1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".3"
             android:text="Nom d\'utilisateur" />
+
         <EditText
             android:id="@+id/editTextNomUtilisateur"
             android:layout_width="0dp"
@@ -31,24 +33,22 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal">
+
         <TextView
             android:id="@+id/textView2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".3"
             android:text="Mot de passe" />
-        <android.support.design.widget.TextInputLayout
+
+        <EditText
+            android:id="@+id/editTextMotDePasse"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight=".7">
-            <EditText
-                android:id="@+id/editTextMotDePasse"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:inputType="textPassword"
-                android:singleLine="true" />
-        </android.support.design.widget.TextInputLayout>
+            android:layout_weight=".7"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:singleLine="true" />
     </LinearLayout>
 
     <CheckBox
