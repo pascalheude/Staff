@@ -22,11 +22,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,8 +45,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import javax.net.ssl.HttpsURLConnection;
 
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -68,9 +78,9 @@ public class ItemListActivity extends AppCompatActivity {
     private FloatingActionButton pFloatingActionButtonPrecedenteRandonnee;
     private FloatingActionButton pFloatingActionPresent;
     private SimpleItemRecyclerViewAdapter pSimpleItemRecyclerViewAdapter[];
+    private AlertDialog pAlertDialog;
     private int pNbRandonnees; // Nombre de randonnées reçues
     private int pNumRandonnee; // Numéro de la randonnée affichée
-    private String pURL;    // URL pour lire le fichier json à partir de la base de données
     private int pId[];   // ID des randonnées (rando_id)
     private int pType[];  // Type des randonnées (rando_type)
     private int pStaffPresent[]; // nombre de staffeurs présents à chaque randonnée
@@ -158,33 +168,25 @@ public class ItemListActivity extends AppCompatActivity {
         lConnexionDialog.setTitle("");
         lConnexionDialog.setView(connexionView);
         lConnexionDialog.setCancelable(false);
-        lConnexionDialog.setPositiveButton("Connexion", new DialogInterface.OnClickListener() {
+        lConnexionDialog.setPositiveButton("Connexion", null);
+        pAlertDialog = lConnexionDialog.create();
+        pAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getBaseContext(), "Connexion clicked", Toast.LENGTH_SHORT).show();
-                if (pCheckBoxMemoriser.isChecked()) {
-                    SharedPreferences.Editor lEditor = pSharedPreferences.edit();
-                    lEditor.putBoolean(getString(R.string.memorized_data), true);
-                    lEditor.putString(getString(R.string.login), pEditTextLogin.getText().toString());
-                    lEditor.putString(getString(R.string.password), pEditTextPassword.getText().toString());
-                    lEditor.apply();
-                }
-                else {
-                    SharedPreferences.Editor lEditor = pSharedPreferences.edit();
-                    lEditor.remove(getString(R.string.memorized_data));
-                    lEditor.remove(getString(R.string.login));
-                    lEditor.remove(getString(R.string.password));
-                    lEditor.apply();
-                }
+            public void onShow(DialogInterface dialog) {
+                Button lButton = ((AlertDialog) pAlertDialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                lButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getBaseContext(), "Connexion en cours", Toast.LENGTH_SHORT).show();
+                        // Connexion à la base de données du staff
+                        ConnexionClass lConnexionClass = new ConnexionClass();
+                        lConnexionClass.execute(getString(R.string.login_URL));
+                    }
+                });
             }
         });
-        AlertDialog lAlertDialog = lConnexionDialog.create();
-        lAlertDialog.show();
-        pURL = String.format(getString(R.string.in_URL), pNbRandonnees);
+        pAlertDialog.show();
         assert pRecyclerView != null;
-        // Lire la base de données du staff
-        DownloadTask downloadTask = new DownloadTask();
-        downloadTask.execute(pURL);
 
         pSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -195,7 +197,7 @@ public class ItemListActivity extends AppCompatActivity {
                 pSimpleItemRecyclerViewAdapter[pNumRandonnee].notifyDataSetChanged();
                 // Lire la base de données du staff
                 DownloadTask downloadTask = new DownloadTask();
-                downloadTask.execute(pURL);
+                downloadTask.execute(String.format(getString(R.string.in_URL), pNbRandonnees));
         }});
 
         pFloatingActionButtonProchaineRandonnee.setOnClickListener(new View.OnClickListener() {
@@ -263,7 +265,10 @@ public class ItemListActivity extends AppCompatActivity {
             case R.id.action_about:
                 AlertDialog.Builder lAlertDialog = new AlertDialog.Builder(this);
                 lAlertDialog.setTitle("Staff\nVersion " + this.getString(R.string.version));
-                lAlertDialog.setMessage("Compatible index version " + this.getString(R.string.index) + " et update version " + this.getString(R.string.update) + "\nGestion de la présence des staffeurs\n© AIT 2019 (pascalh)\n\nassistanceinformatiquetoulouse@gmail.com");
+                lAlertDialog.setMessage("Compatible login version " + this.getString(R.string.version_login) +
+                        " index version " + this.getString(R.string.version_index) +
+                        " et update version " + this.getString(R.string.version_update) +
+                        "\nGestion de la présence des staffeurs\n© AIT 2019 (pascalh)\n\nassistanceinformatiquetoulouse@gmail.com");
                 lAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                     }});
@@ -406,6 +411,97 @@ public class ItemListActivity extends AppCompatActivity {
         }
     }
 
+    // Classe privée ConnexionTask
+    private class ConnexionClass extends AsyncTask<String, Integer, Boolean> {
+        // Attributs privés
+        private String pErreur;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pErreur = "";
+        }
+
+        @Override
+        protected Boolean doInBackground(String... url) {
+            // TODO A terminer
+            String lLogin;
+            String lPassword;
+            byte[] bytes;
+            try {
+                bytes = pEditTextLogin.getText().toString().getBytes("UTF-8");
+                lLogin = new String(bytes, Charset.forName("UTF-8"));
+            }
+            catch(UnsupportedEncodingException e) {
+                lLogin = null;
+            }
+            try {
+                bytes = pEditTextPassword.getText().toString().getBytes("UTF-8");
+                lPassword = new String(bytes, Charset.forName("UTF-8"));
+            }
+            catch(UnsupportedEncodingException e) {
+                lPassword = null;
+            }
+            HttpPost lHttpPost = new HttpPost(getString(R.string.login_URL));
+            HttpClient lHttpClient = new DefaultHttpClient();
+            HttpResponse lHttpResponse;
+            ArrayList<NameValuePair> lNameValuePairList = new ArrayList<NameValuePair>();
+            lNameValuePairList.add(new BasicNameValuePair(getString(R.string.login), lLogin));
+            lNameValuePairList.add(new BasicNameValuePair(getString(R.string.password), lPassword));
+            lNameValuePairList.add(new BasicNameValuePair("nb", String.valueOf(pNbRandonnees)));
+            try {
+                lHttpPost.setEntity(new UrlEncodedFormEntity(lNameValuePairList, "UTF-8"));
+                lHttpResponse = lHttpClient.execute(lHttpPost);
+                if (lHttpResponse.getStatusLine().getStatusCode() == 200) {
+                    if (pCheckBoxMemoriser.isChecked()) {
+                        SharedPreferences.Editor lEditor = pSharedPreferences.edit();
+                        lEditor.putBoolean(getString(R.string.memorized_data), true);
+                        lEditor.putString(getString(R.string.login), pEditTextLogin.getText().toString());
+                        lEditor.putString(getString(R.string.password), pEditTextPassword.getText().toString());
+                        lEditor.apply();
+                    } else {
+                        SharedPreferences.Editor lEditor = pSharedPreferences.edit();
+                        lEditor.remove(getString(R.string.memorized_data));
+                        lEditor.remove(getString(R.string.login));
+                        lEditor.remove(getString(R.string.password));
+                        lEditor.apply();
+                    }
+                    return(true);
+                }
+                else {
+                    InputStream lInputStream = lHttpResponse.getEntity().getContent();
+                    BufferedReader lBufferedReader = new BufferedReader(new InputStreamReader(lInputStream));
+                    StringBuffer lStringBuffer  = new StringBuffer();
+                    String lLigne = "";
+                    while((lLigne = lBufferedReader.readLine()) != null) {
+                        lStringBuffer.append(lLigne);
+                        lStringBuffer.append("\n");
+                    }
+                    pErreur = lStringBuffer.toString();
+                    lBufferedReader.close();
+                }
+            }
+            catch (UnsupportedEncodingException e) {
+            }
+            catch (IOException e) {
+            }
+            return(false);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                pAlertDialog.dismiss();
+                Toast.makeText(getBaseContext(), "Connecté", Toast.LENGTH_SHORT).show();
+                // Lire la base de données du staff
+                DownloadTask downloadTask = new DownloadTask();
+                downloadTask.execute(String.format(getString(R.string.in_URL), pNbRandonnees));
+            }
+            else {
+                pEditTextPassword.setError(pErreur);
+                pEditTextPassword.requestFocus();
+            }
+        }
+    }
     // Méthode lireDonneesDepuisURL
     private String lireDonneesDepuisURL(String url) throws IOException {
         String lDonnees = "";
@@ -574,7 +670,6 @@ public class ItemListActivity extends AppCompatActivity {
         //super.onActivityResult(requestCode, resultCode, data);
         if ((requestCode == REQUEST_CODE_PARAMETRES) && (resultCode == RESULT_OK)) {
             pNbRandonnees = intent.getIntExtra("nb_randonnees_out", 4);
-            pURL = String.format(getString(R.string.in_URL), pNbRandonnees);
             SharedPreferences.Editor lEditor = pSharedPreferences.edit();
             lEditor.putInt(getString(R.string.nb_randonnees), pNbRandonnees);
             lEditor.apply();
@@ -588,7 +683,7 @@ public class ItemListActivity extends AppCompatActivity {
             pSimpleItemRecyclerViewAdapter[pNumRandonnee].notifyDataSetChanged();
             // Lire la base de données du staff
             DownloadTask downloadTask = new DownloadTask();
-            downloadTask.execute(pURL);
+            downloadTask.execute(String.format(getString(R.string.in_URL), pNbRandonnees));
         }
         else {
         }

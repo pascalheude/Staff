@@ -23,7 +23,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".7"
-            android:imeOptions="actionDone"
             android:inputType="textEmailAddress"
             android:singleLine="true" />
     </LinearLayout>
@@ -41,14 +40,17 @@
             android:layout_weight=".3"
             android:text="Mot de passe" />
 
-        <EditText
-            android:id="@+id/editTextMotDePasse"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight=".7"
-            android:imeOptions="actionDone"
-            android:inputType="textPassword"
-            android:singleLine="true" />
+            android:layout_weight=".7">
+            <EditText
+                android:id="@+id/editTextMotDePasse"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:singleLine="true" />
+        </android.support.design.widget.TextInputLayout>
     </LinearLayout>
 
     <CheckBox

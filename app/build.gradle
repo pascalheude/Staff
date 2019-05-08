@@ -8,8 +8,9 @@ android {
         minSdkVersion 21
         targetSdkVersion 21
         versionCode 1
-        versionName '0.9.1'
+        versionName '0.9.2'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        useLibrary 'org.apache.http.legacy'
     }
     buildTypes {
         release {
