@@ -47,6 +47,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.ParseException;
@@ -88,6 +89,7 @@ public class ItemListActivity extends AppCompatActivity {
     private String pDateString[];    // date des randonnées
     private ArrayList<Staffeur> pListeStaffeur[];    // liste des staffeurs de chaque randonnée
 
+    // Méthode ecrireDateRandonnee
     private void ecrireDateRandonnee(String date, int type) {
         pTextViewDate.setText(date);
         pTextViewDate.setTextColor(getColor(R.color.colorBlack));
@@ -114,6 +116,7 @@ public class ItemListActivity extends AppCompatActivity {
         }
     }
 
+    // Méthode textAsBitmap
     private static Bitmap textAsBitmap(String text, float textSize, int textColor) {
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setTextSize(textSize);
@@ -127,6 +130,52 @@ public class ItemListActivity extends AppCompatActivity {
         Canvas canvas = new Canvas(image);
         canvas.drawText(text, 0, baseline, paint);
         return(image);
+    }
+
+    // Méthode ecrirePresences
+    private String ecrirePresences(URL url) throws IOException {
+        String lStatus = "";
+        InputStream lInputStream = null;
+        try {
+            if (url.getProtocol().contains("https")) {
+                // Creer une communication https pour communiquer avec l'URL
+                HttpsURLConnection lHttpsURLConnection = (HttpsURLConnection) url.openConnection();
+                // Connexion à l'URL
+                lHttpsURLConnection.connect();
+                // Lire le flux depuis la connexion
+                lInputStream = lHttpsURLConnection.getInputStream();
+            }
+            else
+            {
+                // Creer une communication http pour communiquer avec l'URL
+                HttpURLConnection lHttpURLConnection = (HttpURLConnection) url.openConnection();
+                // Connexion à l'URL
+                lHttpURLConnection.connect();
+                // Lire le flux depuis la connexion
+                lInputStream = lHttpURLConnection.getInputStream();
+            }
+            BufferedReader lBufferedReader = new BufferedReader(new InputStreamReader(lInputStream));
+            StringBuffer lStringBuffer  = new StringBuffer();
+            String lLigne = "";
+            while((lLigne = lBufferedReader.readLine()) != null) {
+                lStringBuffer.append(lLigne);
+                lStringBuffer.append("\n");
+            }
+            lStatus = lStringBuffer.toString();
+            lBufferedReader.close();
+        }
+        catch (IOException e) {
+        }
+        finally {
+            if (lInputStream != null)
+            {
+                lInputStream.close();
+            }
+            else
+            {
+            }
+        }
+        return(lStatus);
     }
 
     @Override
@@ -242,6 +291,51 @@ public class ItemListActivity extends AppCompatActivity {
             }
         });
 
+        pTextViewDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(v.getContext())
+                        .setTitle("Annulation de randonnée")
+                        .setMessage("Annuler ?")
+                        .setPositiveButton("OUI", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            URL lURL = new URL(String.format(getString(R.string.out_URL), pId[pNumRandonnee - 1], 0, 0, 0));
+                                            if (ecrirePresences(lURL).contains("OK")) {
+                                                for (int i = 0;i < pListeStaffeur.length; i++) {
+                                                    pListeStaffeur[i].clear();
+                                                }
+                                                pSimpleItemRecyclerViewAdapter[pNumRandonnee].notifyDataSetChanged();
+                                                // Lire la base de données du staff
+                                                DownloadTask downloadTask = new DownloadTask();
+                                                downloadTask.execute(String.format(getString(R.string.in_URL), pNbRandonnees));
+                                            }
+                                            else {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        Toast.makeText(getApplicationContext(), "Problème mise à jour présence", Toast.LENGTH_LONG).show();
+                                                    }
+                                                });
+                                            }
+                                        }
+                                        catch(MalformedURLException e) {
+                                        }
+                                        catch (IOException e) {
+                                        }
+                                    }
+                                }).start();
+                            }
+                        })
+                        .setNegativeButton("NON", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        }).show();
+            }
+        });
         if (findViewById(R.id.item_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
@@ -423,7 +517,6 @@ public class ItemListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(String... url) {
-            // TODO A terminer
             String lLogin;
             String lPassword;
             byte[] bytes;
