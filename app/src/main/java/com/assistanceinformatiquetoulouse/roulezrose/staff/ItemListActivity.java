@@ -80,6 +80,7 @@ public class ItemListActivity extends AppCompatActivity {
     private FloatingActionButton pFloatingActionPresent;
     private SimpleItemRecyclerViewAdapter pSimpleItemRecyclerViewAdapter[];
     private AlertDialog pAlertDialog;
+    private Toast pToastConnexionEnCours;
     private int pNbRandonnees; // Nombre de randonnées reçues
     private int pNumRandonnee; // Numéro de la randonnée affichée
     private int pId[];   // ID des randonnées (rando_id)
@@ -213,6 +214,7 @@ public class ItemListActivity extends AppCompatActivity {
             pEditTextPassword.setText("");
             pCheckBoxMemoriser.setChecked(false);
         }
+        pToastConnexionEnCours = Toast.makeText(getBaseContext(), "Connexion en cours", Toast.LENGTH_SHORT);
         AlertDialog.Builder lConnexionDialog = new AlertDialog.Builder(this);
         lConnexionDialog.setTitle("");
         lConnexionDialog.setView(connexionView);
@@ -226,7 +228,7 @@ public class ItemListActivity extends AppCompatActivity {
                 lButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(getBaseContext(), "Connexion en cours", Toast.LENGTH_SHORT).show();
+                        pToastConnexionEnCours.show();
                         // Connexion à la base de données du staff
                         ConnexionClass lConnexionClass = new ConnexionClass();
                         lConnexionClass.execute(getString(R.string.login_URL));
@@ -584,6 +586,7 @@ public class ItemListActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean result) {
             if (result) {
                 pAlertDialog.dismiss();
+                pToastConnexionEnCours.cancel();
                 Toast.makeText(getBaseContext(), "Connecté", Toast.LENGTH_SHORT).show();
                 // Lire la base de données du staff
                 DownloadTask downloadTask = new DownloadTask();
