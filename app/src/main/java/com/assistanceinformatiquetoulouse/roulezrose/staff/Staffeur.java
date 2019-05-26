@@ -132,9 +132,19 @@ public class Staffeur {
         return(this.pPresent);
     }
 
-    // Méthode isPresent
-    public boolean isPresent() {
+    // Méthode estPresent
+    public boolean estPresent() {
         if (this.pPresence.contains("présent")) {
+            return(true);
+        }
+        else {
+            return(false);
+        }
+    }
+
+    // Méthode estIndecis
+    public boolean estIndecis() {
+        if (this.pPresence.contains("indécis")) {
             return(true);
         }
         else {

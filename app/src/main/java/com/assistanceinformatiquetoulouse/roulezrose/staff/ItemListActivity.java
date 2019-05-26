@@ -406,7 +406,7 @@ public class ItemListActivity extends AppCompatActivity {
             holder.aStaffeur = pListeStaffeur.get(position);
             holder.aNomView.setText((String) holder.aStaffeur.lireNom());
             holder.aStatView.setText((String) holder.aStaffeur.lireStat());
-            if (holder.aStaffeur.isPresent()) {
+            if (holder.aStaffeur.estPresent()) {
                 switch(holder.aStaffeur.lirePoste()) {
                     case 0 : // jaune
                         holder.aPresenceView.setText("Jaune");
@@ -439,6 +439,10 @@ public class ItemListActivity extends AppCompatActivity {
                     default : // autre (impossible)
                         holder.aPresenceView.setBackgroundColor(0x00000000);
                 }
+            }
+            else if (holder.aStaffeur.estIndecis()) {
+                holder.aPresenceView.setText((String) holder.aStaffeur.lirePresence());
+                holder.aPresenceView.setBackgroundColor(getColor(R.color.colorBlack));
             }
             else {
                 holder.aPresenceView.setText((String) holder.aStaffeur.lirePresence());
@@ -598,6 +602,7 @@ public class ItemListActivity extends AppCompatActivity {
             }
         }
     }
+
     // Méthode lireDonneesDepuisURL
     private String lireDonneesDepuisURL(String url) throws IOException {
         String lDonnees = "";
