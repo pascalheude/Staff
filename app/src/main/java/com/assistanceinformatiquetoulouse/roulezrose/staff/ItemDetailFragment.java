@@ -27,6 +27,7 @@ import javax.net.ssl.HttpsURLConnection;
 import static java.lang.Thread.sleep;
 
 // Class ItemDetailFragment
+// TODO Remplacer les checkbox poste (conducteur, jaune, ..., binome) par un spinner
 public class ItemDetailFragment extends Fragment {
     // Attibuts publics
     // Attributs privés
@@ -129,13 +130,13 @@ public class ItemDetailFragment extends Fragment {
                                      pStaffeurId,
                                      getArguments().getString(getString(R.string.presence)),
                                      getArguments().getInt(getString(R.string.poste)),
-                                     getArguments().getInt(getString(R.string.conducteur)),
-                                     getArguments().getInt(getString(R.string.jaune)),
-                                     getArguments().getInt(getString(R.string.eclaireur)),
-                                     getArguments().getInt(getString(R.string.meneur)),
-                                     getArguments().getInt(getString(R.string.lanterne)),
-                                     getArguments().getInt(getString(R.string.binome)),
-                                     getArguments().getInt(getString(R.string.present)));
+                                     getArguments().getInt(getString(R.string.poste_conducteur)),
+                                     getArguments().getInt(getString(R.string.poste_jaune)),
+                                     getArguments().getInt(getString(R.string.poste_eclaireur)),
+                                     getArguments().getInt(getString(R.string.poste_meneur)),
+                                     getArguments().getInt(getString(R.string.poste_lanterne)),
+                                     getArguments().getInt(getString(R.string.poste_binome)),
+                                     getArguments().getInt(getString(R.string.poste_present)));
             // Load the dummy date specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load date from a date provider.

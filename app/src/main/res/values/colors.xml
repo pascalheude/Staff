@@ -17,5 +17,7 @@
     <color name="colorRandonneeBleue">#056B9E</color>
     <color name="colorRandonneeDoubleBleue">#0F93FF</color>
     <color name="colorRandonneeDoubleOrange">#FF5A00</color>
-    <color name="colorRandonneeATheme">#E622E0</color>
+    <color name="colorRandonneeATheme">#CC5555</color>
+    <color name="colorRandoneeNoire">#000000</color>
+    <color name="colorRandonneeDefaut">#FFFFFF</color>
 </resources>

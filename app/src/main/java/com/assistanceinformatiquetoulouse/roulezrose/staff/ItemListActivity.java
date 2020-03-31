@@ -89,31 +89,19 @@ public class ItemListActivity extends AppCompatActivity {
     private int pStaffIndecis[]; // Nombre de staffeurs indécis à chaque randonnée
     private String pDateString[];    // date des randonnées
     private ArrayList<Staffeur> pListeStaffeur[];    // liste des staffeurs de chaque randonnée
+    private ConfigurationPoste pConfigurationPoste;  // Information de la table phpbb3_postes
+    private ConfigurationRandonnee pConfigurationRandonnee;  // Information de la table phpbb3_rando_types
 
     // Méthode ecrireDateRandonnee
     private void ecrireDateRandonnee(String date, int type) {
         pTextViewDate.setText(date);
-        pTextViewDate.setTextColor(getColor(R.color.colorBlack));
-        switch(type) {
-            case 0 : // dimanche
-                pTextViewDate.setBackgroundColor(getColor(R.color.colorRandonneeVerte));
-                break;
-            case 1 : // bleue
-                pTextViewDate.setBackgroundColor(getColor(R.color.colorRandonneeDoubleBleue));
-                break;
-            case 2 : // orange
-                pTextViewDate.setBackgroundColor(getColor(R.color.colorRandonneeDoubleOrange));
-                break;
-            case 3 : // grande boucle
-                pTextViewDate.setBackgroundColor(getColor(R.color.colorRandonneeBleue));
-                break;
-            case 4 : // à thème
-                pTextViewDate.setBackgroundColor(getColor(R.color.colorRandonneeATheme));
-                break;
-            case 5 : // noire
-                pTextViewDate.setBackgroundColor(getColor(R.color.colorBlack));
-                pTextViewDate.setTextColor(getColor(R.color.colorWhite));
-                break;
+        pTextViewDate.setBackgroundColor(pConfigurationRandonnee.lireCouleur(type));
+        // Changement de la couleur du texte si randonnée noire
+        if (type == 5) {
+            pTextViewDate.setTextColor(getColor(R.color.colorWhite));
+        }
+        else {
+            pTextViewDate.setTextColor(getColor(R.color.colorBlack));
         }
     }
 
@@ -199,6 +187,8 @@ public class ItemListActivity extends AppCompatActivity {
             pNbRandonnees = 4;
         }
         pNumRandonnee = 1;
+        pConfigurationPoste = new ConfigurationPoste();
+        pConfigurationRandonnee = new ConfigurationRandonnee();
         LayoutInflater lLayoutInflater = getLayoutInflater();
         View connexionView = lLayoutInflater.inflate(R.layout.layout_dialog_login, null);
         pEditTextLogin = (EditText) connexionView.findViewById(R.id.editTextNomUtilisateur);
@@ -245,7 +235,7 @@ public class ItemListActivity extends AppCompatActivity {
                 for (int i = 0;i < pListeStaffeur.length; i++) {
                     pListeStaffeur[i].clear();
                 }
-                pSimpleItemRecyclerViewAdapter[pNumRandonnee].notifyDataSetChanged();
+                pSimpleItemRecyclerViewAdapter[pNumRandonnee - 1].notifyDataSetChanged();
                 // Lire la base de données du staff
                 DownloadTask downloadTask = new DownloadTask();
                 downloadTask.execute(String.format(getString(R.string.in_URL), pNbRandonnees));
@@ -260,8 +250,10 @@ public class ItemListActivity extends AppCompatActivity {
                     pFloatingActionPresent.setImageBitmap(textAsBitmap(String.format("%d-%d", pStaffPresent[pNumRandonnee], pStaffIndecis[pNumRandonnee]), 12, Color.WHITE));
                     pNumRandonnee++;
                     pFloatingActionButtonPrecedenteRandonnee.setEnabled(true);
+                    pFloatingActionButtonPrecedenteRandonnee.show();
                     if (pNumRandonnee == pNbRandonnees) {
                         pFloatingActionButtonProchaineRandonnee.setEnabled(false);
+                        pFloatingActionButtonProchaineRandonnee.hide();
                     }
                     else {
                     }
@@ -282,8 +274,10 @@ public class ItemListActivity extends AppCompatActivity {
                     ((RecyclerView)pRecyclerView).setAdapter(pSimpleItemRecyclerViewAdapter[pNumRandonnee - 1]);
                     pFloatingActionPresent.setImageBitmap(textAsBitmap(String.format("%d-%d", pStaffPresent[pNumRandonnee - 1], pStaffIndecis[pNumRandonnee - 1]), 12, Color.WHITE));
                     pFloatingActionButtonProchaineRandonnee.setEnabled(true);
+                    pFloatingActionButtonProchaineRandonnee.show();
                     if (pNumRandonnee == 1) {
                         pFloatingActionButtonPrecedenteRandonnee.setEnabled(false);
+                        pFloatingActionButtonPrecedenteRandonnee.hide();
                     }
                     else {
                     }
@@ -360,10 +354,10 @@ public class ItemListActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.action_about:
                 AlertDialog.Builder lAlertDialog = new AlertDialog.Builder(this);
-                lAlertDialog.setTitle("Staff\nVersion " + this.getString(R.string.version));
-                lAlertDialog.setMessage("Compatible login version " + this.getString(R.string.version_login) +
-                        " index version " + this.getString(R.string.version_index) +
-                        " et update version " + this.getString(R.string.version_update) +
+                lAlertDialog.setTitle("Staff\nVersion " + getString(R.string.version));
+                lAlertDialog.setMessage("Compatible login version " + getString(R.string.version_login) +
+                        " index version " + getString(R.string.version_index) +
+                        " et update version " + getString(R.string.version_update) +
                         "\nGestion de la présence des staffeurs\n© AIT 2019 (pascalh)\n\nassistanceinformatiquetoulouse@gmail.com");
                 lAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -403,41 +397,18 @@ public class ItemListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
+            int id;
             holder.aStaffeur = pListeStaffeur.get(position);
             holder.aNomView.setText((String) holder.aStaffeur.lireNom());
             holder.aStatView.setText((String) holder.aStaffeur.lireStat());
             if (holder.aStaffeur.estPresent()) {
-                switch(holder.aStaffeur.lirePoste()) {
-                    case 0 : // jaune
-                        holder.aPresenceView.setText("Jaune");
-                        holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurJaune));
-                        break;
-                    case 1 : // éclaireur
-                        holder.aPresenceView.setText("Eclaireur");
-                        holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurOrange));
-                        break;
-                    case 2 : // meneur
-                        holder.aPresenceView.setText("Meneur");
-                        holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurOrange));
-                        break;
-                    case 3 : // lanterne
-                        holder.aPresenceView.setText("Lanterne");
-                        holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurOrange));
-                        break;
-                    case 4 : // conducteur
-                        holder.aPresenceView.setText("Pilote");
-                        holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurConducteur));
-                        break;
-                    case 5 : // électron
-                        holder.aPresenceView.setText("Electron");
-                        holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurOrange));
-                        break;
-                    case 6 : // binôme
-                        holder.aPresenceView.setText("Binôme");
-                        holder.aPresenceView.setBackgroundColor(getColor(R.color.colorStaffeurBinome));
-                        break;
-                    default : // autre (impossible)
-                        holder.aPresenceView.setBackgroundColor(0x00000000);
+                id = holder.aStaffeur.lirePoste();
+                holder.aPresenceView.setBackgroundColor(pConfigurationPoste.lireCouleur(id));
+                if ((id == 4) || (id == 7)) {
+                    holder.aPresenceView.setText("Pilote");
+                }
+                else {
+                    holder.aPresenceView.setText(pConfigurationPoste.lirePoste(id));
                 }
             }
             else if (holder.aStaffeur.estIndecis()) {
@@ -471,13 +442,13 @@ public class ItemListActivity extends AppCompatActivity {
                         intent.putExtra(getString(R.string.id), holder.aStaffeur.lireId());
                         intent.putExtra(getString(R.string.presence), holder.aStaffeur.lirePresence());
                         intent.putExtra(getString(R.string.poste), holder.aStaffeur.lirePoste());
-                        intent.putExtra(getString(R.string.conducteur), holder.aStaffeur.lireConducteur());
-                        intent.putExtra(getString(R.string.jaune), holder.aStaffeur.lireJaune());
-                        intent.putExtra(getString(R.string.eclaireur), holder.aStaffeur.lireEclaireur());
-                        intent.putExtra(getString(R.string.meneur), holder.aStaffeur.lireMeneur());
-                        intent.putExtra(getString(R.string.lanterne), holder.aStaffeur.lireLanterne());
-                        intent.putExtra(getString(R.string.binome), holder.aStaffeur.lireBinome());
-                        intent.putExtra(getString(R.string.present), holder.aStaffeur.lirePresent());
+                        intent.putExtra(getString(R.string.poste_conducteur), holder.aStaffeur.lireConducteur());
+                        intent.putExtra(getString(R.string.poste_jaune), holder.aStaffeur.lireJaune());
+                        intent.putExtra(getString(R.string.poste_eclaireur), holder.aStaffeur.lireEclaireur());
+                        intent.putExtra(getString(R.string.poste_meneur), holder.aStaffeur.lireMeneur());
+                        intent.putExtra(getString(R.string.poste_lanterne), holder.aStaffeur.lireLanterne());
+                        intent.putExtra(getString(R.string.poste_binome), holder.aStaffeur.lireBinome());
+                        intent.putExtra(getString(R.string.poste_present), holder.aStaffeur.lirePresent());
                         startActivityForResult(intent, REQUEST_CODE_PRESENCE);
                     }
                 }
@@ -525,6 +496,11 @@ public class ItemListActivity extends AppCompatActivity {
         protected Boolean doInBackground(String... url) {
             String lLogin;
             String lPassword;
+            String lJSONString;
+            JSONObject lGlobalJSONObject;
+            JSONObject lJSONObjet;
+            JSONArray liste_poste;
+            JSONArray liste_randonnee;
             byte[] bytes;
             try {
                 bytes = pEditTextLogin.getText().toString().getBytes("UTF-8");
@@ -563,6 +539,69 @@ public class ItemListActivity extends AppCompatActivity {
                         lEditor.remove(getString(R.string.login));
                         lEditor.remove(getString(R.string.password));
                         lEditor.apply();
+                    }
+                    InputStream lInputStream = lHttpResponse.getEntity().getContent();
+                    BufferedReader lBufferedReader = new BufferedReader(new InputStreamReader(lInputStream));
+                    StringBuffer lStringBuffer  = new StringBuffer();
+                    String lLigne = "";
+                    while((lLigne = lBufferedReader.readLine()) != null) {
+                        lStringBuffer.append(lLigne);
+                        lStringBuffer.append("\n");
+                    }
+                    lJSONString = lStringBuffer.toString();
+                    lBufferedReader.close();
+                    try {
+                        lGlobalJSONObject = new JSONObject(lJSONString);
+                        liste_poste = lGlobalJSONObject.getJSONArray("couleurs_poste");
+                        for (int i = 0; i < liste_poste.length(); i++) {
+                            lJSONObjet = liste_poste.getJSONObject(i);
+                            pConfigurationPoste.ajouterPoste(lJSONObjet.getInt("id"),
+                                                lJSONObjet.getString("label"),
+                                                lJSONObjet.getString("bg_color"));
+                        }
+                    }
+                    catch (JSONException e) {
+                        pConfigurationPoste.effacerPoste();
+                        pConfigurationPoste.ajouterPoste(0, "Jaune",
+                                getColor(R.color.colorStaffeurJaune));
+                        pConfigurationPoste.ajouterPoste(1, "Eclaireur",
+                                getColor(R.color.colorStaffeurOrange));
+                        pConfigurationPoste.ajouterPoste(2, "Meneur",
+                                getColor(R.color.colorStaffeurOrange));
+                        pConfigurationPoste.ajouterPoste(3, "Lanterne",
+                                getColor(R.color.colorStaffeurOrange));
+                        pConfigurationPoste.ajouterPoste(4, "Pilote",
+                                getColor(R.color.colorStaffeurConducteur));
+                        pConfigurationPoste.ajouterPoste(5, "Electron",
+                                getColor(R.color.colorStaffeurOrange));
+                        pConfigurationPoste.ajouterPoste(6, "Binôme",
+                                getColor(R.color.colorStaffeurBinome));
+                        pConfigurationPoste.ajouterPoste(7, "Pilote",
+                                getColor(R.color.colorStaffeurConducteur));
+                    }
+                    try {
+                        lGlobalJSONObject = new JSONObject(lJSONString);
+                        liste_randonnee = lGlobalJSONObject.getJSONArray("couleurs_randonnée");
+                        for (int i = 0; i < liste_randonnee.length(); i++) {
+                            lJSONObjet = liste_randonnee.getJSONObject(i);
+                            pConfigurationRandonnee.ajouterCouleur(lJSONObjet.getInt("id"),
+                                                      lJSONObjet.getString("color"));
+                        }
+                    }
+                    catch (JSONException e) {
+                        pConfigurationRandonnee.effacerRandonnee();
+                        pConfigurationRandonnee.ajouterCouleur(0,
+                                                  getColor(R.color.colorRandonneeVerte));
+                        pConfigurationRandonnee.ajouterCouleur(1,
+                                                  getColor(R.color.colorRandonneeDoubleBleue));
+                        pConfigurationRandonnee.ajouterCouleur(2,
+                                                  getColor(R.color.colorRandonneeDoubleOrange));
+                        pConfigurationRandonnee.ajouterCouleur(3,
+                                                  getColor(R.color.colorRandonneeBleue));
+                        pConfigurationRandonnee.ajouterCouleur(4,
+                                                  getColor(R.color.colorRandonneeATheme));
+                        pConfigurationRandonnee.ajouterCouleur(5,
+                                                  getColor(R.color.colorRandoneeNoire));
                     }
                     return(true);
                 }
@@ -704,13 +743,13 @@ public class ItemListActivity extends AppCompatActivity {
                                     lJSONObjet.getInt(getString(R.string.id)),
                                     lJSONObjet.getString(getString(R.string.presence)),
                                     lJSONObjet.getInt(getString(R.string.poste)),
-                                    lJSONObjet.getInt(getString(R.string.conducteur)),
-                                    lJSONObjet.getInt(getString(R.string.jaune)),
-                                    lJSONObjet.getInt(getString(R.string.eclaireur)),
-                                    lJSONObjet.getInt(getString(R.string.meneur)),
-                                    lJSONObjet.getInt(getString(R.string.lanterne)),
-                                    lJSONObjet.getInt((getString(R.string.binome))),
-                                    lJSONObjet.getInt(getString(R.string.present)));
+                                    lJSONObjet.getInt(getString(R.string.poste_conducteur)),
+                                    lJSONObjet.getInt(getString(R.string.poste_jaune)),
+                                    lJSONObjet.getInt(getString(R.string.poste_eclaireur)),
+                                    lJSONObjet.getInt(getString(R.string.poste_meneur)),
+                                    lJSONObjet.getInt(getString(R.string.poste_lanterne)),
+                                    lJSONObjet.getInt(getString(R.string.poste_binome)),
+                                    lJSONObjet.getInt(getString(R.string.poste_present)));
                             if (lStaffeur.lirePresence().equals(getString(R.string.staff_present))) {
                                 pStaffPresent[i]++;
                             }
@@ -752,15 +791,21 @@ public class ItemListActivity extends AppCompatActivity {
             pFloatingActionPresent.setImageBitmap(textAsBitmap(String.format("%d-%d", pStaffPresent[pNumRandonnee - 1], pStaffIndecis[pNumRandonnee - 1]), 12, Color.WHITE));
             if (pNumRandonnee == 1) {
                 pFloatingActionButtonPrecedenteRandonnee.setEnabled(false);
+                pFloatingActionButtonPrecedenteRandonnee.hide();
                 pFloatingActionButtonProchaineRandonnee.setEnabled(true);
+                pFloatingActionButtonProchaineRandonnee.show();
             }
             else if (pNumRandonnee == pNbRandonnees) {
                 pFloatingActionButtonPrecedenteRandonnee.setEnabled(true);
+                pFloatingActionButtonPrecedenteRandonnee.show();
                 pFloatingActionButtonProchaineRandonnee.setEnabled(false);
+                pFloatingActionButtonProchaineRandonnee.hide();
             }
             else {
                 pFloatingActionButtonPrecedenteRandonnee.setEnabled(true);
+                pFloatingActionButtonPrecedenteRandonnee.show();
                 pFloatingActionButtonProchaineRandonnee.setEnabled(true);
+                pFloatingActionButtonProchaineRandonnee.show();
             }
             pSwipeRefreshLayout.setRefreshing(false);
         }

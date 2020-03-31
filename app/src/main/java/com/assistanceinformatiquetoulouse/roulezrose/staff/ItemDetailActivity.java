@@ -63,13 +63,13 @@ public class ItemDetailActivity extends AppCompatActivity {
             arguments.putInt(getString(R.string.id), getIntent().getIntExtra(getString(R.string.id), 0));
             arguments.putString(getString(R.string.presence), getIntent().getStringExtra(getString(R.string.presence)));
             arguments.putInt(getString(R.string.poste), getIntent().getIntExtra(getString(R.string.poste), 0));
-            arguments.putInt(getString(R.string.conducteur), getIntent().getIntExtra(getString(R.string.conducteur), 0));
-            arguments.putInt(getString(R.string.jaune), getIntent().getIntExtra(getString(R.string.jaune), 0));
-            arguments.putInt(getString(R.string.eclaireur), getIntent().getIntExtra(getString(R.string.eclaireur), 0));
-            arguments.putInt(getString(R.string.meneur), getIntent().getIntExtra(getString(R.string.meneur), 0));
-            arguments.putInt(getString(R.string.lanterne), getIntent().getIntExtra(getString(R.string.lanterne), 0));
-            arguments.putInt(getString(R.string.present), getIntent().getIntExtra(getString(R.string.present), 0));
-            arguments.putInt(getString(R.string.binome), getIntent().getIntExtra(getString(R.string.binome), 0));
+            arguments.putInt(getString(R.string.poste_conducteur), getIntent().getIntExtra(getString(R.string.poste_conducteur), 0));
+            arguments.putInt(getString(R.string.poste_jaune), getIntent().getIntExtra(getString(R.string.poste_jaune), 0));
+            arguments.putInt(getString(R.string.poste_eclaireur), getIntent().getIntExtra(getString(R.string.poste_eclaireur), 0));
+            arguments.putInt(getString(R.string.poste_meneur), getIntent().getIntExtra(getString(R.string.poste_meneur), 0));
+            arguments.putInt(getString(R.string.poste_lanterne), getIntent().getIntExtra(getString(R.string.poste_lanterne), 0));
+            arguments.putInt(getString(R.string.poste_present), getIntent().getIntExtra(getString(R.string.poste_present), 0));
+            arguments.putInt(getString(R.string.poste_binome), getIntent().getIntExtra(getString(R.string.poste_binome), 0));
             ItemDetailFragment fragment = new ItemDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Staff</string>
-    <string name="version">0.9.5</string>
-    <string name="version_login">1</string>
-    <string name="version_index">8</string>
-    <string name="version_update">5</string>
+    <string name="version">1.0.0</string>
+    <string name="version_login">2</string>
+    <string name="version_index">10</string>
+    <string name="version_update">6</string>
     <string name="action_about">About</string>
     <string name="title_item_detail">To be defined</string>
     <string name="login_URL">https://forum.roulezrose.com/Android/staff_login.php</string>
@@ -17,13 +17,13 @@
     <string name="id">id</string>
     <string name="presence">présence</string>
     <string name="poste">poste</string>
-    <string name="conducteur">C</string>
-    <string name="jaune">J</string>
-    <string name="eclaireur">E</string>
-    <string name="meneur">M</string>
-    <string name="lanterne">L</string>
-    <string name="binome">B</string>
-    <string name="present">P</string>
+    <string name="poste_conducteur">C</string>
+    <string name="poste_jaune">J</string>
+    <string name="poste_eclaireur">E</string>
+    <string name="poste_meneur">M</string>
+    <string name="poste_lanterne">L</string>
+    <string name="poste_binome">B</string>
+    <string name="poste_present">P</string>
     <string name="staff_present">présent</string>
     <string name="nb_randonnees">nb_randonnees</string>
     <string name="memorized_data">Memorized data</string>
