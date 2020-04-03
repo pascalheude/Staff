@@ -91,6 +91,7 @@ public class ItemListActivity extends AppCompatActivity {
     private ArrayList<Staffeur> pListeStaffeur[];    // liste des staffeurs de chaque randonnée
     private ConfigurationPoste pConfigurationPoste;  // Information de la table phpbb3_postes
     private ConfigurationRandonnee pConfigurationRandonnee;  // Information de la table phpbb3_rando_types
+    private long pTempsStatistique;  // Information de la table phpbb3_config (mois pour remise à 0 des statistiques
 
     // Méthode ecrireDateRandonnee
     private void ecrireDateRandonnee(String date, int type) {
@@ -238,7 +239,7 @@ public class ItemListActivity extends AppCompatActivity {
                 pSimpleItemRecyclerViewAdapter[pNumRandonnee - 1].notifyDataSetChanged();
                 // Lire la base de données du staff
                 DownloadTask downloadTask = new DownloadTask();
-                downloadTask.execute(String.format(getString(R.string.in_URL), pNbRandonnees));
+                downloadTask.execute(String.format(getString(R.string.in_URL), pNbRandonnees, pTempsStatistique));
         }});
 
         pFloatingActionButtonProchaineRandonnee.setOnClickListener(new View.OnClickListener() {
@@ -307,7 +308,7 @@ public class ItemListActivity extends AppCompatActivity {
                                                 pSimpleItemRecyclerViewAdapter[pNumRandonnee].notifyDataSetChanged();
                                                 // Lire la base de données du staff
                                                 DownloadTask downloadTask = new DownloadTask();
-                                                downloadTask.execute(String.format(getString(R.string.in_URL), pNbRandonnees));
+                                                downloadTask.execute(String.format(getString(R.string.in_URL), pNbRandonnees, pTempsStatistique));
                                             }
                                             else {
                                                 runOnUiThread(new Runnable() {
@@ -494,6 +495,7 @@ public class ItemListActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(String... url) {
+            int mois_statistique;
             String lLogin;
             String lPassword;
             String lJSONString;
@@ -603,6 +605,21 @@ public class ItemListActivity extends AppCompatActivity {
                         pConfigurationRandonnee.ajouterCouleur(5,
                                                   getColor(R.color.colorRandoneeNoire));
                     }
+                    try {
+                        lGlobalJSONObject = new JSONObject(lJSONString);
+                        mois_statistique = lGlobalJSONObject.getInt("mois_statistique") - 1;
+                    }
+                    catch(JSONException e) {
+                        mois_statistique = 8; // Septembre
+                    }
+                    Date lDate = new Date();
+                    int annee = lDate.getYear();
+                    if (lDate.getMonth() >= 8) {
+                        pTempsStatistique = new Date(annee, mois_statistique, 1, 8, 0).getTime();
+                    }
+                    else {
+                        pTempsStatistique = new Date(annee - 1, mois_statistique, 1, 8, 0).getTime() / 1000;
+                    }
                     return(true);
                 }
                 else {
@@ -633,7 +650,7 @@ public class ItemListActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), "Connecté", Toast.LENGTH_SHORT).show();
                 // Lire la base de données du staff
                 DownloadTask downloadTask = new DownloadTask();
-                downloadTask.execute(String.format(getString(R.string.in_URL), pNbRandonnees));
+                downloadTask.execute(String.format(getString(R.string.in_URL), pNbRandonnees, pTempsStatistique));
             }
             else {
                 pEditTextPassword.setError(pErreur);
@@ -829,7 +846,7 @@ public class ItemListActivity extends AppCompatActivity {
             pSimpleItemRecyclerViewAdapter[pNumRandonnee].notifyDataSetChanged();
             // Lire la base de données du staff
             DownloadTask downloadTask = new DownloadTask();
-            downloadTask.execute(String.format(getString(R.string.in_URL), pNbRandonnees));
+            downloadTask.execute(String.format(getString(R.string.in_URL), pNbRandonnees, pTempsStatistique));
         }
         else {
         }
