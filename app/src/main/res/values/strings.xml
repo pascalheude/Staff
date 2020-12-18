@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Staff</string>
-    <string name="version">1.1.0</string>
+    <string name="version">1.2.1</string>
     <string name="version_login">3</string>
-    <string name="version_index">11</string>
+    <string name="version_index">13</string>
     <string name="version_update">6</string>
     <string name="action_about">About</string>
     <string name="title_item_detail">To be defined</string>
@@ -24,6 +24,7 @@
     <string name="poste_lanterne">L</string>
     <string name="poste_binome">B</string>
     <string name="poste_present">P</string>
+    <string name="liste_poste">Liste postes</string>
     <string name="staff_present">présent</string>
     <string name="nb_randonnees">nb_randonnees</string>
     <string name="memorized_data">Memorized data</string>
@@ -34,5 +35,16 @@
         <item>4</item>
         <item>5</item>
         <item>6</item>
+    </string-array>
+    <string-array name="postes">
+        <item>Absent / Indécis</item>
+        <item>Jaune</item>
+        <item>Eclaireur</item>
+        <item>Meneur</item>
+        <item>Lanterne</item>
+        <item>Space pilot</item>
+        <item>Electron</item>
+        <item>Binôme</item>
+        <item>Double space pilot</item>
     </string-array>
 </resources>

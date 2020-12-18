@@ -359,7 +359,7 @@ public class ItemListActivity extends AppCompatActivity {
                 lAlertDialog.setMessage("Compatible login version " + getString(R.string.version_login) +
                         " index version " + getString(R.string.version_index) +
                         " et update version " + getString(R.string.version_update) +
-                        "\nGestion de la présence des staffeurs\n© AIT 2019 (pascalh)\n\nassistanceinformatiquetoulouse@gmail.com");
+                        "\nGestion de la présence des staffeurs\n© AIT 2020 (pascalh)\n\nassistanceinformatiquetoulouse@gmail.com");
                 lAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                     }});
@@ -450,6 +450,7 @@ public class ItemListActivity extends AppCompatActivity {
                         intent.putExtra(getString(R.string.poste_lanterne), holder.aStaffeur.lireLanterne());
                         intent.putExtra(getString(R.string.poste_binome), holder.aStaffeur.lireBinome());
                         intent.putExtra(getString(R.string.poste_present), holder.aStaffeur.lirePresent());
+                        intent.putStringArrayListExtra(getString(R.string.liste_poste), pConfigurationPoste.lireListePoste());
                         startActivityForResult(intent, REQUEST_CODE_PRESENCE);
                     }
                 }
@@ -614,8 +615,8 @@ public class ItemListActivity extends AppCompatActivity {
                     }
                     Date lDate = new Date();
                     int annee = lDate.getYear();
-                    if (lDate.getMonth() >= 8) {
-                        pTempsStatistique = new Date(annee, mois_statistique, 1, 8, 0).getTime();
+                    if (lDate.getMonth() >= mois_statistique) {
+                        pTempsStatistique = new Date(annee, mois_statistique, 1, 8, 0).getTime() / 1000;
                     }
                     else {
                         pTempsStatistique = new Date(annee - 1, mois_statistique, 1, 8, 0).getTime() / 1000;
@@ -809,8 +810,14 @@ public class ItemListActivity extends AppCompatActivity {
             if (pNumRandonnee == 1) {
                 pFloatingActionButtonPrecedenteRandonnee.setEnabled(false);
                 pFloatingActionButtonPrecedenteRandonnee.hide();
-                pFloatingActionButtonProchaineRandonnee.setEnabled(true);
-                pFloatingActionButtonProchaineRandonnee.show();
+                if (pNbRandonnees == 1) {
+                    pFloatingActionButtonProchaineRandonnee.setEnabled(false);
+                    pFloatingActionButtonProchaineRandonnee.hide();
+                }
+                else {
+                    pFloatingActionButtonProchaineRandonnee.setEnabled(true);
+                    pFloatingActionButtonProchaineRandonnee.show();
+                }
             }
             else if (pNumRandonnee == pNbRandonnees) {
                 pFloatingActionButtonPrecedenteRandonnee.setEnabled(true);
@@ -843,7 +850,7 @@ public class ItemListActivity extends AppCompatActivity {
             for (int i = 0;i < pListeStaffeur.length; i++) {
                 pListeStaffeur[i].clear();
             }
-            pSimpleItemRecyclerViewAdapter[pNumRandonnee].notifyDataSetChanged();
+            pSimpleItemRecyclerViewAdapter[pNumRandonnee-1].notifyDataSetChanged();
             // Lire la base de données du staff
             DownloadTask downloadTask = new DownloadTask();
             downloadTask.execute(String.format(getString(R.string.in_URL), pNbRandonnees, pTempsStatistique));
