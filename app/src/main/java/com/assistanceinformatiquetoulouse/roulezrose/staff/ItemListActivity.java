@@ -732,69 +732,96 @@ public class ItemListActivity extends AppCompatActivity {
                 if (lJSONString != null) {
                     lGlobalJSONObject = new JSONObject(lJSONString);
                     pNbRandonnees = lGlobalJSONObject.getInt("Nombre");
-                    pSimpleItemRecyclerViewAdapter = new SimpleItemRecyclerViewAdapter[pNbRandonnees];
-                    pId = new int[pNbRandonnees];
-                    pType = new int[pNbRandonnees];
-                    pStaffPresent = new int[pNbRandonnees];
-                    pStaffIndecis = new int[pNbRandonnees];
-                    pDateString = new String[pNbRandonnees];
-                    pListeStaffeur = new ArrayList[pNbRandonnees];
-                    liste_randonnees = lGlobalJSONObject.getJSONArray("Randonnees");
-                    for (int i = 0;i < liste_randonnees.length(); i++) {
-                        lJSONObjet = liste_randonnees.getJSONObject(i);
-                        pId[i] = lJSONObjet.getInt("Id");
-                        pType[i] = lJSONObjet.getInt("Type");
-                        try {
-                            lDate = lSimpleDateFormatIn.parse(lJSONObjet.getString("Date"));
-                            pDateString[i] = lSimpleDateFormatOut.format(lDate);
-                        } catch (ParseException e) {
-                            pDateString[i] = "Date inconnue";
+                    if (pNbRandonnees != 0) {
+                        pSimpleItemRecyclerViewAdapter = new SimpleItemRecyclerViewAdapter[pNbRandonnees];
+                        pId = new int[pNbRandonnees];
+                        pType = new int[pNbRandonnees];
+                        pStaffPresent = new int[pNbRandonnees];
+                        pStaffIndecis = new int[pNbRandonnees];
+                        pDateString = new String[pNbRandonnees];
+                        pListeStaffeur = new ArrayList[pNbRandonnees];
+                        liste_randonnees = lGlobalJSONObject.getJSONArray("Randonnees");
+                        for (int i = 0;i < liste_randonnees.length(); i++) {
+                            lJSONObjet = liste_randonnees.getJSONObject(i);
+                            pId[i] = lJSONObjet.getInt("Id");
+                            pType[i] = lJSONObjet.getInt("Type");
+                            try {
+                                lDate = lSimpleDateFormatIn.parse(lJSONObjet.getString("Date"));
+                                pDateString[i] = lSimpleDateFormatOut.format(lDate);
+                            } catch (ParseException e) {
+                                pDateString[i] = "Date inconnue";
+                            }
+                            pStaffPresent[i] = 0;
+                            pStaffIndecis[i] = 0;
+                            pListeStaffeur[i] = new ArrayList<>();
+                            liste_staffeur = lJSONObjet.getJSONArray("Staffeurs");
+                            for (int j = 0; j < liste_staffeur.length(); j++) {
+                                Staffeur lStaffeur;
+                                lJSONObjet = liste_staffeur.getJSONObject(j);
+                                lStaffeur = new Staffeur(lJSONObjet.getString(getString(R.string.nom)),
+                                        lJSONObjet.getInt(getString(R.string.id)),
+                                        lJSONObjet.getString(getString(R.string.presence)),
+                                        lJSONObjet.getInt(getString(R.string.poste)),
+                                        lJSONObjet.getInt(getString(R.string.poste_conducteur)),
+                                        lJSONObjet.getInt(getString(R.string.poste_jaune)),
+                                        lJSONObjet.getInt(getString(R.string.poste_eclaireur)),
+                                        lJSONObjet.getInt(getString(R.string.poste_meneur)),
+                                        lJSONObjet.getInt(getString(R.string.poste_lanterne)),
+                                        lJSONObjet.getInt(getString(R.string.poste_binome)),
+                                        lJSONObjet.getInt(getString(R.string.poste_present)));
+                                if (lStaffeur.lirePresence().equals(getString(R.string.staff_present))) {
+                                    pStaffPresent[i]++;
+                                }
+                                else if (lStaffeur.lirePresence().equals("indécis")) {
+                                    pStaffIndecis[i]++;
+                                }
+                                else {
+                                }
+                                pListeStaffeur[i].add(lStaffeur);
+                            }
+                            pSimpleItemRecyclerViewAdapter[i] = new SimpleItemRecyclerViewAdapter(pListeStaffeur[i]);
                         }
-                        pStaffPresent[i] = 0;
-                        pStaffIndecis[i] = 0;
-                        pListeStaffeur[i] = new ArrayList<>();
-                        liste_staffeur = lJSONObjet.getJSONArray("Staffeurs");
-                        for (int j = 0; j < liste_staffeur.length(); j++) {
-                            Staffeur lStaffeur;
-                            lJSONObjet = liste_staffeur.getJSONObject(j);
-                            lStaffeur = new Staffeur(lJSONObjet.getString(getString(R.string.nom)),
-                                    lJSONObjet.getInt(getString(R.string.id)),
-                                    lJSONObjet.getString(getString(R.string.presence)),
-                                    lJSONObjet.getInt(getString(R.string.poste)),
-                                    lJSONObjet.getInt(getString(R.string.poste_conducteur)),
-                                    lJSONObjet.getInt(getString(R.string.poste_jaune)),
-                                    lJSONObjet.getInt(getString(R.string.poste_eclaireur)),
-                                    lJSONObjet.getInt(getString(R.string.poste_meneur)),
-                                    lJSONObjet.getInt(getString(R.string.poste_lanterne)),
-                                    lJSONObjet.getInt(getString(R.string.poste_binome)),
-                                    lJSONObjet.getInt(getString(R.string.poste_present)));
-                            if (lStaffeur.lirePresence().equals(getString(R.string.staff_present))) {
-                                pStaffPresent[i]++;
-                            }
-                            else if (lStaffeur.lirePresence().equals("indécis")) {
-                                pStaffIndecis[i]++;
-                            }
-                            else {
-                            }
-                            pListeStaffeur[i].add(lStaffeur);
-                        }
-                        pSimpleItemRecyclerViewAdapter[i] = new SimpleItemRecyclerViewAdapter(pListeStaffeur[i]);
+                    }
+                    else {
+                        pNbRandonnees = 1;
+                        pSimpleItemRecyclerViewAdapter = new SimpleItemRecyclerViewAdapter[1];
+                        pId = new int[1];
+                        pType = new int[1];
+                        pStaffPresent = new int[1];
+                        pStaffIndecis = new int[1];
+                        pDateString = new String[1];
+                        pDateString[0] = "Pas de randonnée";
                     }
                 }
                 else {
                     pNbRandonnees = 1;
+                    pSimpleItemRecyclerViewAdapter = new SimpleItemRecyclerViewAdapter[1];
+                    pId = new int[1];
+                    pType = new int[1];
+                    pStaffPresent = new int[1];
+                    pStaffIndecis = new int[1];
                     pDateString = new String[1];
                     pDateString[0] = "Impossible d'accéder au serveur de données";
                 }
             }
             catch(IOException e) {
                 pNbRandonnees = 1;
+                pSimpleItemRecyclerViewAdapter = new SimpleItemRecyclerViewAdapter[1];
+                pId = new int[1];
+                pType = new int[1];
+                pStaffPresent = new int[1];
+                pStaffIndecis = new int[1];
                 pDateString = new String[1];
                 pDateString[0] = e.toString();
                 Log.d("Background Task", e.toString());
             }
             catch(JSONException e) {
                 pNbRandonnees = 1;
+                pSimpleItemRecyclerViewAdapter = new SimpleItemRecyclerViewAdapter[1];
+                pId = new int[1];
+                pType = new int[1];
+                pStaffPresent = new int[1];
+                pStaffIndecis = new int[1];
                 pDateString = new String[1];
                 pDateString[0] = "Erreur JSON";
                 e.printStackTrace();
